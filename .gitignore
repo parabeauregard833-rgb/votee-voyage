@@ -1,0 +1,8 @@
+node_modules/
+data/
+*.db
+store.json
+.env
+REMOTE_files/
+Votez pour VOTEZ - Voyage de Rêve_files/
+*.log
