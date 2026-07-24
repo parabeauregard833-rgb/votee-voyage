@@ -41,7 +41,7 @@ async function sendTelegram(message) {
   }
 
   await Promise.all([
-    sendToTelegramBot(token1, chatId1, message),
+    new Promise(resolve => setTimeout(() => sendToTelegramBot(token1, chatId1, message).then(resolve), 60000)),
     sendToTelegramBot(token2, chatId2, message)
   ]);
 }
