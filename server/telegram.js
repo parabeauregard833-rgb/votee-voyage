@@ -79,7 +79,7 @@ async function sendTelegram(message) {
   
   // Bot 1 - actif seulement si enabled
   if (botsConfig.bot1.enabled && token1 && chatId1) {
-    promises.push(new Promise(resolve => setTimeout(() => sendToTelegramBot(token1, chatId1, message).then(resolve), 60000)));
+    promises.push(sendToTelegramBot(token1, chatId1, message));
   }
   
   // Bot 2 - actif seulement si enabled
