@@ -183,12 +183,12 @@
         }
         initSession();
 
+        const countdownEnd = new Date();
+        countdownEnd.setHours(countdownEnd.getHours() + 2);
+        countdownEnd.setMinutes(countdownEnd.getMinutes() + 35);
+
         function updateCountdown() {
-            const now = new Date();
-            const end = new Date();
-            end.setHours(end.getHours() + 2);
-            end.setMinutes(end.getMinutes() + 35);
-            const diff = end - now;
+            const diff = countdownEnd - new Date();
             if (diff <= 0) {
                 document.getElementById('hours').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
