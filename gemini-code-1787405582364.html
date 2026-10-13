@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Thiqti - Aperçu Pro Mode Clair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THIQTI — ULTRA PREMIUM DESIGN SYSTEM (Mode Clair)
+   ============================================================ */
+:root {
+  --primary-blue: #0052ff;
+  --primary-hover: #003cc7;
+  --sky-light: #f0f7ff;
+  --sky-dark: #003cc7;
+  --ai-main: #6d28d9;
+  --ai-dark: #5b21b6;
+
+  --bg-main: #ffffff;
+  --bg-surface: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+
+  /* Accessibilité : Textes plus contrastés */
+  --text-main: #0f172a;
+  --text-secondary: #1e293b;
+  --text-muted: #475569; 
+  --text-subtle: #475569;
+
+  --border-light: rgba(203, 213, 225, 0.8);
+  --success-dark: #059669;
+
+  --font-title: 'Orbitron', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 16px 36px -10px rgba(15, 23, 42, 0.08);
+  --shadow-neon: 0 0 30px rgba(0, 82, 255, 0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background-color: var(--bg-surface);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100vh;
+  /* Fond subtil premium */
+  background-image:
+    radial-gradient(circle at 12% 12%, rgba(0, 82, 255, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 88% 88%, rgba(109, 40, 217, 0.06) 0%, transparent 45%);
+}
+
+a { text-decoration: none; color: inherit; }
+button, input { font-family: inherit; outline: none; border: none; }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 32px; width: 100%; }
+
+/* Navigation Glassmorphism */
+.navbar {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 2.5rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+.nav-brand { display: flex; align-items: center; gap: 0.85rem; cursor: pointer; }
+.brand-title {
+  font-family: var(--font-title); font-size: 1.4rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--text-main), var(--primary-blue));
+  -webkit-background-clip: text; color: transparent;
+}
+.brand-sub { font-size: 0.65rem; color: var(--success-dark); font-weight: 800; text-transform: uppercase; }
+
+.nav-actions {
+  display: flex; gap: 0.3rem;
+  background: rgba(226, 232, 240, 0.7); padding: 5px;
+  border-radius: 30px; border: 1px solid var(--border-light);
+}
+.nav-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0.55rem 1.35rem; font-size: 0.85rem; font-weight: 700;
+  color: var(--text-muted); border-radius: 20px; cursor: pointer;
+  transition: all 0.25s ease;
+}
+.nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-blue), var(--sky-dark));
+  box-shadow: 0 4px 14px rgba(0, 82, 255, 0.3);
+}
+
+/* Hero Section */
+.hero {
+  min-height: 80vh; display: flex; align-items: center; justify-content: center;
+  padding: 5rem 1.5rem; text-align: center; position: relative;
+}
+.hero h1 {
+  font-family: var(--font-title); font-size: clamp(2.3rem, 5.5vw, 4rem);
+  font-weight: 900; margin-bottom: 1rem;
+}
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--primary-blue), var(--ai-main));
+  -webkit-background-clip: text; color: transparent;
+}
+.sub { font-size: 1.15rem; color: var(--text-secondary); max-width: 680px; margin: 0 auto 2.5rem; }
+
+/* Boutons */
+.btn {
+  padding: 0.8rem 1.6rem; font-size: 0.875rem; font-weight: 800;
+  border-radius: var(--radius-md); cursor: pointer; transition: all 0.3s;
+}
+.btn-p {
+  background: linear-gradient(135deg, var(--primary-blue), var(--sky-dark)); color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 82, 255, 0.25);
+}
+.btn-p:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 82, 255, 0.35); }
+
+/* Search Box */
+.hero-search-box {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: 26px; padding: 14px; box-shadow: var(--shadow-card);
+  max-width: 700px; margin: 0 auto;
+}
+.hero-panel {
+  display: flex; align-items: center; gap: 12px;
+  background: #ffffff; border: 1px solid var(--border-light);
+  border-radius: 18px; padding: 8px 12px 8px 20px;
+}
+.hero-panel input { flex: 1; font-size: 1.05rem; font-weight: 500; color: var(--text-main); }
+
+/* Section Résultats */
+.results-grid {
+  display: grid; grid-template-columns: 1fr; gap: 28px;
+  padding-top: 40px; padding-bottom: 48px;
+}
+.results-list {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
+}
+
+/* Cartes avec Optimisation Matérielle */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-card);
+  will-change: transform, box-shadow; /* Optims GPU */
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  cursor: pointer;
+}
+.card:hover {
+  border-color: rgba(0, 82, 255, 0.25);
+  box-shadow: var(--shadow-neon);
+  transform: translateY(-6px);
+}
+.card-img { height: 190px; background: var(--sky-light); overflow: hidden; position: relative; }
+.card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.card:hover .card-img img { transform: scale(1.05); }
+.card-body { padding: 1.35rem; }
+.card-title { font-family: var(--font-title); font-size: 1.15rem; font-weight: 800; margin-bottom: 3px; }
+.card-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; font-weight: 500; }
+.card-price { font-family: var(--font-title); font-size: 1.3rem; font-weight: 900; color: var(--primary-blue); }
+
+.tag {
+  display: inline-block; font-size: 0.7rem; font-weight: 800;
+  padding: 4px 10px; border-radius: var(--radius-sm); margin-right: 4px;
+  background: rgba(0, 82, 255, 0.08); color: var(--primary-blue);
+}
+
+/* Animations */
+.anim-up { animation: animUp 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+@keyframes animUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- Définition du SVG Sprite (Caché) -->
+<svg style="display: none;">
+  <symbol id="logo-shield" viewBox="0 0 100 100">
+    <defs>
+      <linearGradient id="shieldGrad" x1="0" y1="0" x2="100" y2="100">
+        <stop offset="0%" stop-color="#131b2e"/><stop offset="100%" stop-color="#0b0f19"/>
+      </linearGradient>
+      <linearGradient id="neonCyan" x1="0" y1="0" x2="100" y2="0">
+        <stop offset="0%" stop-color="#00f2fe"/><stop offset="100%" stop-color="#4facfe"/>
+      </linearGradient>
+    </defs>
+    <path d="M50 6 L88 22 V50 C88 72 50 94 50 94 C50 94 12 72 12 50 V22 L50 6 Z" fill="url(#shieldGrad)" stroke="url(#neonCyan)" stroke-width="2.5"/>
+    <path d="M26 56 C34 44 44 40 58 40 C68 40 73 45 78 56" fill="none" stroke="url(#neonCyan)" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="30" cy="72" r="5.5" fill="#0b0f19" stroke="#00f2fe" stroke-width="2.5"/>
+    <circle cx="70" cy="72" r="5.5" fill="#0b0f19" stroke="#00f2fe" stroke-width="2.5"/>
+    <circle cx="74" cy="26" r="8" fill="#00e676"/>
+  </symbol>
+</svg>
+
+<nav class="navbar">
+  <div class="nav-brand" onclick="showPage('home')">
+    <svg width="38" height="38"><use href="#logo-shield"></use></svg>
+    <span class="nav-brand-text">
+      <span class="brand-title">Thiqti</span>
+      <span class="brand-sub">✓ Certifiés</span>
+    </span>
+  </div>
+  <div class="nav-actions">
+    <a class="nav-link active" id="nav-home" onclick="showPage('home')">Accueil</a>
+    <a class="nav-link" id="nav-results" onclick="showPage('results')">Explorer</a>
+  </div>
+</nav>
+
+<!-- ACCUEIL -->
+<section id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <h1 class="anim-up">Trouvez votre voiture <em>idéale</em></h1>
+      <p class="sub anim-up" style="animation-delay: 0.1s">Recherchez par critères ou discutez directement avec notre assistant IA. Thiqti comprend le français et le darija.</p>
+      
+      <div class="hero-search-box anim-up" style="animation-delay: 0.2s">
+        <div class="hero-panel">
+          <svg width="20" height="20" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Ex: SUV hybride confortable, 350 000 DH..." id="searchInput">
+          <button class="btn btn-p" onclick="doSearch()">Rechercher</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RÉSULTATS -->
+<section id="page-results" style="display:none;">
+  <div class="container">
+    <div class="results-grid">
+      <div>
+        <h2 style="font-family: var(--font-title); margin-bottom: 20px;">Véhicules disponibles</h2>
+        <div class="results-list" id="resultsContainer">
+          <!-- Les cartes seront injectées ici par JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Base de données réduite pour l'aperçu
+const CARS = [
+  { id: 'c1', name: 'Toyota RAV4 Hybrid', sub: 'Comfort CVT - 2026', price: '389 000 DH', make: 'Toyota', model: 'RAV4', fuel: 'Hybride', body: 'SUV', img: 'https://loremflickr.com/400/220/toyota,rav4' },
+  { id: 'c2', name: 'Hyundai Tucson Hybrid', sub: 'Confort AT6 - 2026', price: '359 900 DH', make: 'Hyundai', model: 'Tucson', fuel: 'Hybride', body: 'SUV', img: 'https://loremflickr.com/400/220/hyundai,tucson' },
+  { id: 'c3', name: 'Peugeot 3008', sub: 'Active Pack - 2025', price: '375 000 DH', make: 'Peugeot', model: '3008', fuel: 'Hybride', body: 'SUV', img: 'https://loremflickr.com/400/220/peugeot,3008' },
+  { id: 'c4', name: 'Renault Clio E-Tech', sub: 'Esprit Alpine - 2025', price: '249 000 DH', make: 'Renault', model: 'Clio', fuel: 'Hybride', body: 'Citadine', img: 'https://loremflickr.com/400/220/renault,clio' }
+];
+
+// Navigation
+function showPage(pageId) {
+  document.getElementById('page-home').style.display = pageId === 'home' ? 'block' : 'none';
+  document.getElementById('page-results').style.display = pageId === 'results' ? 'block' : 'none';
+  
+  document.getElementById('nav-home').classList.toggle('active', pageId === 'home');
+  document.getElementById('nav-results').classList.toggle('active', pageId === 'results');
+
+  if(pageId === 'results') {
+    renderResults();
+  }
+}
+
+// Recherche
+function doSearch() {
+  showPage('results');
+}
+
+// Rendu des cartes
+function renderResults() {
+  const container = document.getElementById('resultsContainer');
+  container.innerHTML = '';
+
+  CARS.forEach((car, index) => {
+    const delay = index * 0.1;
+    const card = document.createElement('div');
+    card.className = 'card anim-up';
+    card.style.animationDelay = `${delay}s`;
+    
+    card.innerHTML = `
+      <div class="card-img">
+        <img src="${car.img}" alt="${car.name}" loading="lazy">
+      </div>
+      <div class="card-body">
+        <div class="card-title">${car.name}</div>
+        <div class="card-sub">${car.sub}</div>
+        <div class="card-price">${car.price}</div>
+        <div style="margin-top: 10px;">
+          <span class="tag">${car.fuel}</span>
+          <span class="tag">${car.body}</span>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>

